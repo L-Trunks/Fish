@@ -3,9 +3,9 @@ const mysql = require('mysql');
 
 var pool = mysql.createPool({
     connectionLimit: 50,
-    host: 'localhost',
+    host: 'http://149.129.59.121:3306',
     user: 'root',
-    password: 'root',
+    password: 'aliyun1998',
     database: 'fish',
     multipleStatements: true  //是否允许执行多条sql语句
 });
