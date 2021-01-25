@@ -43,7 +43,7 @@ async function verifyUserName(params) {
 
 //查询所有用户
 async function selectAllUser(params) {
-    let sql = `select user_name,name,permission,introduce,img_url from f_user limit ${params.page - 1 * params.number},${params.number}`
+    let sql = `select id,user_name,name,permission,introduce,img_url from f_user limit ${params.page - 1 * params.number},${params.number}`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -57,6 +57,19 @@ async function selectAllUser(params) {
 //根据id查询用户信息
 async function selectUserById(params) {
     let sql = `select user_name,name,permission,introduce,img_url from f_user where id = ${params.userId}`
+    let data = await mysql.execute(sql)
+    return new Promise((resolve, reject) => {
+        if (data && data.errno) {
+            reject(data)
+        } else {
+            resolve(data)
+        }
+    })
+}
+
+//根据用户名查询用户信息
+async function selectUserByUserName(params) {
+    let sql = `select id,user_name,name,permission,introduce,img_url from f_user where id = ${params.userName}`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -86,5 +99,6 @@ module.exports = {
     verifyUserName: verifyUserName,
     selectAllUser: selectAllUser,
     selectUserById: selectUserById,
-    updateUserById:updateUserById
+    updateUserById:updateUserById,
+    selectUserByUserName:selectUserByUserName
 }
