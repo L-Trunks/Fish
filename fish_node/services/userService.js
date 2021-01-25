@@ -43,7 +43,8 @@ async function verifyUserName(params) {
 
 //查询所有用户
 async function selectAllUser(params) {
-    let sql = `select id,user_name,name,permission,introduce,img_url from f_user limit ${params.page - 1 * params.number},${params.number}`
+    let sql = `select id,user_name,name,permission,introduce,img_url from f_user limit ${params.page - 1 * params.limit},${params.limit}
+    order by ct ${params.order&&params.order&& 'asc'}`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
