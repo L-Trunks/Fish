@@ -3,15 +3,15 @@ const router = express.Router();
 //token
 import errorNumber from '../config/errorNum'
 const token = require('../token/token') //引入
-const articleService = require('../services/articleService')
+const categoryService = require('../services/categoryService')
 
-//发布文章
-router.post('/add_article', function (req, res, next) {
+//添加分类
+router.post('/add_category', function (req, res, next) {
     let params = req.body
     // console.log(params)
     let accessToken = req.get('accessToken')
     if (token.checkToken(accessToken)) {
-        articleService.addArticle(params).then(result => {
+        categoryService.addCategory(params).then(result => {
             // console.log('数据::::' + result)
             res.json({ code: '200', data: result })
         }).catch(err => {
@@ -24,13 +24,14 @@ router.post('/add_article', function (req, res, next) {
     }
 });
 
-//删除文章
-router.get('/delete_article', function (req, res, next) {
+
+//删除分类
+router.get('/delete_category', function (req, res, next) {
     let accessToken = req.get('accessToken')
     let params = req.query
     // console.log(params)
     if (token.checkToken(accessToken)) {
-        articleService.deleteArticle(params).then(result => {
+        categoryService.deleteCategory(params).then(result => {
             // console.log('数据::::' + result)
             res.json({ code: '200', data: result })
         }).catch(err => {
@@ -41,15 +42,15 @@ router.get('/delete_article', function (req, res, next) {
     } else {
         res.json(errorNumber.TOKEN_TIME_OUT())
     }
-
 });
 
-//修改文章
-router.post('/update_article', function (req, res, next) {
+//修改分类
+router.post('/update_category', function (req, res, next) {
     let params = req.body
+    // console.log(params)
     let accessToken = req.get('accessToken')
     if (token.checkToken(accessToken)) {
-        articleService.updateArticle(params).then(result => {
+        categoryService.updateCategory(params).then(result => {
             // console.log('数据::::' + result)
             res.json({ code: '200', data: result })
         }).catch(err => {
@@ -62,12 +63,70 @@ router.post('/update_article', function (req, res, next) {
     }
 });
 
-//修改点赞评论收藏数
-router.post('/update_article_count', function (req, res, next) {
-    let params = req.body
+//查询所有分类
+router.get('/select_all_category', function (req, res, next) {
+    // let accessToken = req.get('accessToken')
+    let params = req.query
+    // console.log(params)
+    // if (token.checkToken(accessToken)) {
+    categoryService.selectAllCategory(params).then(result => {
+        // console.log('数据::::' + result)
+        res.json({ code: '200', data: result })
+    }).catch(err => {
+        console.log('出现错误:' + JSON.stringify(err))
+        next(err);
+        res.json({ code: '200', desc: '服务器跑丢了' })
+    })
+    // } else {
+    //     res.json(errorNumber.TOKEN_TIME_OUT())
+    // }
+});
+
+//根据id查询分类
+router.get('/select_category_by_id', function (req, res, next) {
+    // let accessToken = req.get('accessToken')
+    let params = req.query
+    // console.log(params)
+    // if (token.checkToken(accessToken)) {
+    categoryService.selectCategoryById(params).then(result => {
+        // console.log('数据::::' + result)
+        res.json({ code: '200', data: result })
+    }).catch(err => {
+        console.log('出现错误:' + JSON.stringify(err))
+        next(err);
+        res.json({ code: '200', desc: '服务器跑丢了' })
+    })
+    // } else {
+    //     res.json(errorNumber.TOKEN_TIME_OUT())
+    // }
+});
+
+//根据类型查询分类
+router.get('/select_category_by_type', function (req, res, next) {
+    // let accessToken = req.get('accessToken')
+    let params = req.query
+    // console.log(params)
+    // if (token.checkToken(accessToken)) {
+    categoryService.selectCategoryByType(params).then(result => {
+        // console.log('数据::::' + result)
+        res.json({ code: '200', data: result })
+    }).catch(err => {
+        console.log('出现错误:' + JSON.stringify(err))
+        next(err);
+        res.json({ code: '200', desc: '服务器跑丢了' })
+    })
+    // } else {
+    //     res.json(errorNumber.TOKEN_TIME_OUT())
+    // }
+});
+
+//根据用户查询分类
+router.get('/select_category_by_user', function (req, res, next) {
     let accessToken = req.get('accessToken')
+    let params = req.query
+    // console.log(params)
     if (token.checkToken(accessToken)) {
-        articleService.updateArticleCount(params).then(result => {
+        categoryService.selectCategoryByUser(params).then(result => {
             // console.log('数据::::' + result)
             res.json({ code: '200', data: result })
         }).catch(err => {
@@ -80,79 +139,5 @@ router.post('/update_article_count', function (req, res, next) {
     }
 });
 
-//浏览量+1
-router.get('/update_article_looks_count', function (req, res, next) {
-    // let accessToken = req.get('accessToken')
-    let params = req.query
-    // console.log(params)
-    // if (token.checkToken(accessToken)) {
-    articleService.updateArticleLooksCount(params).then(result => {
-        // console.log('数据::::' + result)
-        res.json({ code: '200', data: result })
-    }).catch(err => {
-        console.log('出现错误:' + JSON.stringify(err))
-        next(err);
-        res.json({ code: '200', desc: '服务器跑丢了' })
-    })
-    // } else {
-    //     res.json(errorNumber.TOKEN_TIME_OUT())
-    // }
-});
 
-//查询所有文章
-router.get('/select_all_article', function (req, res, next) {
-    // let accessToken = req.get('accessToken')
-    let params = req.query
-    // console.log(params)
-    // if (token.checkToken(accessToken)) {
-    articleService.selectAllArticle(params).then(result => {
-        // console.log('数据::::' + result)
-        res.json({ code: '200', data: result })
-    }).catch(err => {
-        console.log('出现错误:' + JSON.stringify(err))
-        next(err);
-        res.json({ code: '200', desc: '服务器跑丢了' })
-    })
-    // } else {
-    //     res.json(errorNumber.TOKEN_TIME_OUT())
-    // }
-});
-
-//根据id查询文章
-router.get('/select_article_by_id', function (req, res, next) {
-    // let accessToken = req.get('accessToken')
-    let params = req.query
-    // console.log(params)
-    // if (token.checkToken(accessToken)) {
-    articleService.selectArticleById(params).then(result => {
-        // console.log('数据::::' + result)
-        res.json({ code: '200', data: result })
-    }).catch(err => {
-        console.log('出现错误:' + JSON.stringify(err))
-        next(err);
-        res.json({ code: '200', desc: '服务器跑丢了' })
-    })
-    // } else {
-    //     res.json(errorNumber.TOKEN_TIME_OUT())
-    // }
-});
-
-//搜索
-router.get('/select_article_by_like', function (req, res, next) {
-    // let accessToken = req.get('accessToken')
-    let params = req.query
-    // console.log(params)
-    // if (token.checkToken(accessToken)) {
-    articleService.selectArticleByLike(params).then(result => {
-        // console.log('数据::::' + result)
-        res.json({ code: '200', data: result })
-    }).catch(err => {
-        console.log('出现错误:' + JSON.stringify(err))
-        next(err);
-        res.json({ code: '200', desc: '服务器跑丢了' })
-    })
-    // } else {
-    //     res.json(errorNumber.TOKEN_TIME_OUT())
-    // }
-});
 module.exports = router;

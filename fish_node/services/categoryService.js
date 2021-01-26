@@ -42,6 +42,19 @@ async function updateCategory(params) {
     })
 }
 
+//查询所有分类
+async function selectAllCategory(params) {
+    let sql = `select c.*,u.name from f_category where c.user_id = u.id`
+    let data = await mysql.execute(sql)
+    return new Promise((resolve, reject) => {
+        if (data && data.errno) {
+            reject(data)
+        } else {
+            resolve(data)
+        } 
+    })
+}
+
 //根据id查询分类
 async function selectCategoryById(params) {
     let sql = `select * from f_category where id  = ${params.categroyId}`
@@ -87,5 +100,6 @@ module.exports = {
     deleteCategory:deleteCategory,
     selectCategoryById:selectCategoryById,
     selectCategoryByType:selectCategoryByType,
-    selectCategoryByUser:selectCategoryByUser
+    selectCategoryByUser:selectCategoryByUser,
+    selectAllCategory:selectAllCategory
 }

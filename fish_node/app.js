@@ -5,10 +5,12 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
-
 const articleRouter = require('./routes/article');
-
 const uploadRouter = require('./routes/upload');
+const articleInfoRouter = require('./routes/articleInfo');
+const categoryRouter = require('./routes/category');
+const settingsRouter = require('./routes/settings');
+const userRouter = require('./routes/user');
 
 const middles = require('./middles/middles');
 const bodyParser = require('body-parser');
@@ -30,6 +32,10 @@ app.use(middles.cors);
 app.use('/', indexRouter);
 app.use('/api/article', articleRouter);
 app.use('/api/upload', uploadRouter);
+app.use('/api/article_info', articleInfoRouter);
+app.use('/api/category', categoryRouter);
+app.use('/api/settings', settingsRouter);
+app.use('/api/user', userRouter);
 
 
 // 请求超时处理

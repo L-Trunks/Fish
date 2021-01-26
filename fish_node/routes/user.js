@@ -103,7 +103,7 @@ router.post('/select_user_by_id', function (req, res, next) {
 });
 
 //根据token查询用户
-router.post('/select_user_by_id', function (req, res, next) {
+router.post('/select_user_by_token', function (req, res, next) {
     // let params = req.body
     let accessToken = req.get('accessToken')
 
