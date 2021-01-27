@@ -161,3 +161,4 @@ router.post('/update_user_by_id', function (req, res, next) {
     }
 
 });
+module.exports = router;
