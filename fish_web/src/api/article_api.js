@@ -4,22 +4,29 @@ const url = '/api/article'
 /**
  * 获取所有文章
  */
-export const GetAllArticleList = (params) => {
-    return get(url+'/get_all_article_list',params)
+export const SelectAllArticle = (params) => {
+    return get(url+'/select_all_article',params)
 }
 
 /**
  * 根据用户获取文章
  */
-export const GetArticleListByUser = (params) => {
-    return get(url+'/get_article_list_by_user',params)
+export const SelectAllArticleByUser = (params) => {
+    return get(url+'/select_all_article_by_user',params)
+}
+
+/**
+ * 搜索
+ */
+export const SelectArticleByLike = (params) => {
+    return get(url+'/select_article_by_like',params)
 }
 
 /**
  * 根据id获取文章信息
  */
-export const GetArticleInfoById = (params) => {
-    return get(url+'/get_article_info_by_id',params)
+export const SelectArticleById = (params) => {
+    return get(url+'/select_article_by_id',params)
 }
 
 /**
@@ -33,7 +40,7 @@ export const UpdateArticle = (params) => {
  * 删除文章
  */
 export const DeleteArticle = (params) => {
-    return post(url+'/delete_article',params)
+    return get(url+'/delete_article',params)
 }
 
 /**
@@ -46,6 +53,13 @@ export const AddArticle = (params) => {
 /**
  * 文章浏览量加1
  */
-export const AddArticleLook = (params) => {
-    return post(url+'/add_article_look',params)
+export const UpdateArticleLooksCount = (params) => {
+    return get(url+'/update_article_looks_count',params)
+}
+
+/**
+ * 修改点赞评论收藏数
+ */
+export const UpdateArticleCount = (params) => {
+    return get(url+'/update_article_count',params)
 }

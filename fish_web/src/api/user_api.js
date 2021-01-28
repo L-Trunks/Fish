@@ -4,104 +4,57 @@ const url= '/api/users'
 /**
  * 登录
  */
-export const Login = (params) => {
-    return post(url+'/login', params)
+export const UserLogin = (params) => {
+    return post(url+'/user_login', params)
 }
 
 /**
  * 注册
  */
-export const Register = (params) => {
-    return post(url+'/register', params)
+export const UserRegister = (params) => {
+    return post(url+'/user_register', params)
 }
 
 /**
  * 根据token获取用户信息
  */
-export const GetUserInfoByToken = (params) => {
-    return post(url+'/get_user_info_by_token', params)
+export const SelectUserByToken = (params) => {
+    return post(url+'/select_user_by_token', params)
 }
 
 /**
- * 设置管理员
+ * 查询所有用户
  */
-export const SetManagement = (params) => {
-    return post(url+'/set_management', params)
+export const SelectAllUser = (params) => {
+    return post(url+'/get_all_user', params)
 }
 
 /**
  * 根据id获取用户信息
  */
-export const GetUserInfoById = (params) => {
-    return get(url+'/get_user_info_by_id', params)
-}
-
-/**
- * 封号
- */
-export const BanUser = (params) => {
-    return post(url+'/ban_user', params)
-}
-
-/**
- * 解禁
- */
-export const UnBanUser = (params) => {
-    return post(url+'/unban_user', params)
+export const SelectUserById = (params) => {
+    return get(url+'/select_user_by_id', params)
 }
 
 /**
  * 验证用户名
  */
 export const VerifyUserName = (params) => {
-    return post(url+'/verify_user_name', params)
+    return get(url+'/verify_user_name', params)
 }
 
 /**
- * 验证昵称
+ * 根据用户名查询用户
  */
-export const VerifyNickName = (params) => {
-    return post(url+'/verify_nick_name', params)
+export const SelectUserByUserName = (params) => {
+    return post(url+'/select_user_by_user_name', params)
 }
 
-/**
- * 修改密码
- */
-export const UpdatePassword = (params) => {
-    return post(url+'/update_password', params)
-}
 
 /**
  * 修改个人信息
  */
-export const UpdateUserInfo = (params) => {
-    return post(url+'/update_user_info', params)
+export const UpdateUserById = (params) => {
+    return post(url+'/update_user_by_id', params)
 }
 
-/**
- * 获取所有用户列表
- */
-export const GetAllUserList = (params) => {
-    return get(url+'/get_all_user_list', params)
-}
-
-/**
- * 获取普通用户列表
- */
-export const GetUserList = (params) => {
-    return get(url+'/get_user_list', params)
-}
-
-/**
- * 获取管理员列表
- */
-export const GetManagementUserList = (params) => {
-    return get(url+'/get_management_user_list', params)
-}
-
-/**
- * 获取街舞大神列表
- */
-export const GetGodUserList = (params) => {
-    return get(url+'/get_god_user_list', params)
-}

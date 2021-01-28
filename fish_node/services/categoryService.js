@@ -3,8 +3,7 @@ import errorNumber from '../config/errorNum'
 
 //添加分类
 async function addCategory(params) {
-    let sql = `insert into f_category (category_name,category_intro,user_id,status,type) 
-    values (${params.categroyName},${params.categoryIntro},${params.userId},${params.status},${params.type})`
+    let sql = `insert into f_category (category_name,category_intro,user_id,status,type) values (${params.categroyName},${params.categoryIntro},${params.userId},${params.status},${params.type})`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -30,8 +29,7 @@ async function deleteCategory(params) {
 
 //修改分类
 async function updateCategory(params) {
-    let sql = `update f_category set category_intro = ${params.categoryIntro},category_name = ${params.categroyName}
-    ,user_id = ${params.userId},status = ${params.status},type = ${params.type} where id = ${params.categroyId}`
+    let sql = `update f_category set category_intro = ${params.categoryIntro},category_name = ${params.categroyName},user_id = ${params.userId},status = ${params.status},type = ${params.type} where id = ${params.categroyId}`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {

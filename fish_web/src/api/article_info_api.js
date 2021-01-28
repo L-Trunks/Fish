@@ -2,78 +2,51 @@ import { get, post } from './http'
 
 const url = '/api/articleInfo'
 /**
- * 点赞文章
+ * 添加文章信息(添加点赞、评论、收藏信息)
  */
-export const ArticleAddGoods = (params) => {
-    return post(url + '/add_goods', params)
+export const addArticleInfo = (params) => {
+    return post(url + '/add_article_info', params)
 }
 
 /**
- * 取消点赞
+ * 删除信息
  */
-export const ArticleRemoveGoods = (params) => {
-    return get(url + '/remove_goods', params)
+export const DeleteArticleInfo = (params) => {
+    return get(url + '/delete_article_info', params)
 }
 
 /**
  * 获取点赞状态
  */
-export const ArticleGetGoodsStatus = (params) => {
-    return get(url + '/get_goods_status', params)
+export const UpdateArticleInfo = (params) => {
+    return post(url + '/update_article_info', params)
 }
 
 /**
- * 收藏文章
+ * 根据类型查询文章信息
  */
-export const ArticleAddCollect = (params) => {
-    return get(url + '/add_collect', params)
+export const SelectArticleInfoByType = (params) => {
+    return get(url + '/select_article_info_by_type', params)
 }
 
 /**
- * 取消收藏
+ * 根据id查询文章信息
  */
-export const ArticleRemoveCollect = (params) => {
-    return get(url + '/remove_collect', params)
+export const SelectArticleInfoById = (params) => {
+    return get(url + '/select_article_info_by_id', params)
 }
 
 /**
- * 获取收藏列表
+ * 根据文章和类型查询文章信息
  */
-export const ArticleGetCollectList = (params) => {
-    return get(url + '/get_collect_list', params)
+export const SelectArticleInfoByArticleAndType = (params) => {
+    return get(url + '/select_article_info_by_article_and_type', params)
 }
 
 /**
- * 添加评论
+ * 根据文章查询文章信息
  */
-export const ArticleAddComments = (params) => {
-    return post(url + '/add_comments', params)
+export const SelectArticleInfoByArticle = (params) => {
+    return get(url + '/select_article_info_by_article', params)
 }
 
-/**
- * 添加二级评论
- */
-export const AddSecondComments = (params) => {
-    return post(url + '/add_second_comments', params)
-}
-/**
- * 查询评论列表
- */
-export const ArticleSelectComments = (params) => {
-    return get(url + '/select_comments', params)
-}
-
-/**
- * 二级评论列表
- */
-export const SelectSecondComments = (params) => {
-    return get(url + '/select_second_comments', params)
-}
-
-
-/**
- * 更新点赞收藏评论数
- */
-export const GetCounts = (params) => {
-    return get(url + '/get_counts', params)
-}

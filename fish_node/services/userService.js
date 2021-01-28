@@ -2,9 +2,7 @@ import mysql from '../database/mysql'
 
 //用户注册
 async function userRegister(params) {
-    let sql = `insert into f_user (user_name,pass_word,name,permission,introduce,img_url) values (
-        ${params.userName},${params.passWord},${params.name},${params.permission || 1},${params.introduce || ''},${params.img_url || ''}
-    )`
+    let sql = `insert into f_user (user_name,pass_word,name,permission,introduce,img_url) values (${params.userName},${params.passWord},${params.name},${params.permission || 1},${params.introduce || ''},${params.img_url || ''})`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -43,8 +41,7 @@ async function verifyUserName(params) {
 
 //查询所有用户
 async function selectAllUser(params) {
-    let sql = `select id,user_name,name,permission,introduce,img_url from f_user limit ${params.page - 1 * params.limit},${params.limit}
-    order by ct ${params.order&&params.order&& 'asc'}`
+    let sql = `select id,user_name,name,permission,introduce,img_url from f_user order by ct ${params.order&&params.order&& 'asc'} limit ${(params.page - 1) * params.limit},${params.limit}`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -83,8 +80,7 @@ async function selectUserByUserName(params) {
 
 //修改用户信息
 async function updateUserById(params) {
-    let sql = `update f_user set 
-    user_name = ${params.userName},name = ${params.name},permission = ${params.permission},introduce = ${params.introduce},img_url=${params.img_url} where id = ${params.userId }`
+    let sql = `update f_user set user_name = ${params.userName},name = ${params.name},permission = ${params.permission},introduce = ${params.introduce},img_url=${params.img_url} where id = ${params.userId }`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
