@@ -1,8 +1,8 @@
 //分页配置
 
 export const PageConfig = {
-    page_no: 0,//当前第几页
-    page_size: 8,//每页显示几条
+    page: 0,//当前第几页
+    number: 8,//每页显示几条
 }
 export const permissionMap = {
     "0": "普通用户",
