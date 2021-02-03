@@ -26,9 +26,9 @@ router.post('/user_login', function (req, res, next) {
     // let accessToken = req.get('accessToken')
     let params = req.body
     console.log(params)
-    userService.userRegister(params).then(result => {
+    userService.userLogin(params).then(result => {
         // console.log('数据::::' + result)
-        let tokens = token.createToken(result[0].username, tokenTimes);
+        let tokens = token.createToken(result[0].user_name, tokenTimes);
         res.json({ code: '200', data: result, accessToken: tokens && tokens || null });
     }).catch(err => {
         console.log('出现错误:' + JSON.stringify(err))
@@ -108,7 +108,8 @@ router.post('/select_user_by_token', function (req, res, next) {
     let accessToken = req.get('accessToken')
 
     if (token.checkToken(accessToken)) {
-        let user = token.decodeToken(userData)
+        let user = token.decodeToken(accessToken)
+        console.log('token解析---',user)
         userService.selectUserByUserName({ userName: user.payload.data }).then(result => {
             // console.log('数据::::' + result)
             res.json({ code: '200', data: result });

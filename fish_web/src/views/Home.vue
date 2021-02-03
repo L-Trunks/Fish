@@ -121,6 +121,9 @@ export default {
         })
         .catch((err) => {
           this.$router.push("/login");
+          this.changeIsLogin(false);
+            this.changeUserId('');
+            this.changeUserInfo({});
           this.$message.error("token失效，请重新登录");
         });
     }
@@ -132,6 +135,7 @@ export default {
       "changeIsLogin",
       "changeUserId",
       "changeUserInfo",
+      "changeKeyword",
     ]),
     ...mapActions([]),
     getSearch() {
@@ -140,6 +144,17 @@ export default {
         path: "/search",
         query: { keyword: this.searchWord },
       });
+    },
+    logout() {
+      this.$confirm("确定退出登录吗？")
+        .then((_) => {
+          localStorage.setItem("accessToken", "");
+          this.changeIsLogin(false);
+          this.changeUserInfo({});
+          this.changeUserId("");
+          this.$router.push("/");
+        })
+        .catch((_) => {});
     },
   },
   watch: {},
@@ -202,7 +217,7 @@ export default {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-around;
+  justify-content: flex-end;
 }
 .search_btn {
   background: #3e3c3a;
@@ -215,16 +230,25 @@ export default {
 }
 @media (max-width: 768px) {
   .top_search {
-    padding: 10px;
+    padding: 0px;
     align-items: center;
     border-bottom: 1px #3e3c3a solid;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
   }
+  .top_search > div {
+    padding: 0 10px;
+  }
+  .top_search > div:first-child {
+    padding: 0;
+  }
   .top_model_top .el-input {
     width: 80%;
     padding: 5px 0;
+  }
+  .top_model_bottom span {
+    margin: 10px 0;
   }
   .top_model_bottom {
     display: flex;
@@ -238,10 +262,16 @@ export default {
   .top_left .el-image {
     width: 100%;
     height: auto;
+    position: relative;
+    top: -10px;
+  }
+  .top {
+    padding-top: 0;
   }
   .top_right {
     padding: 10px 0;
     justify-content: flex-end;
+    margin-top: 20px;
   }
 }
 </style>

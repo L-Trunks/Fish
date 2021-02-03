@@ -14,9 +14,9 @@ export default {
 <style scoped>
 #red {
   margin-top:150px;
-  border-top: solid #ff7a7a;
+  border-top: solid #c7c3c3;
   border-width: 3px;
-  background: #696969;
+  background: #e9e0e0;
   bottom: 0;
   width: 100%;
   /* height: 100px; */
