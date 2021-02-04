@@ -149,7 +149,8 @@ export default {
 
                 this.registerForm = {
                   ...this.registerForm,
-                  img_url: "http://localhost:8888/public/images/user1.jpg"||'',
+                  img_url:
+                    "http://localhost:8888/public/images/user1.jpg" || "",
                   permission: "1",
                 };
 
@@ -202,9 +203,16 @@ export default {
   computed: {
     ...mapState({
       isLogin: (state) => state.isLogin,
-      userid: (state) => state.userid,
+      userId: (state) => state.userId,
       userInfo: (state) => state.userInfo,
     }),
+  },
+  isLogin: {
+    hanler(newval, old) {
+      if (newval) {
+        this.$router.push("/");
+      }
+    },
   },
   components: {},
 };

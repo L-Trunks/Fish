@@ -130,9 +130,18 @@ export default {
   computed: {
     ...mapState({
       isLogin: (state) => state.isLogin,
-      userid: (state) => state.userid,
+      userId: (state) => state.userId,
       userInfo: (state) => state.userInfo,
     }),
+  },
+  watch:{
+    isLogin:{
+      hanler(newval,old){
+        if(newval){
+          this.$router.push("/");
+        }
+      }
+    }
   },
   components: {},
 };

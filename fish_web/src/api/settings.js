@@ -1,6 +1,6 @@
 import { get, post } from './http'
 
-const url = '/api/search'
+const url = '/api/settings'
 /**
  * 添加设置（公告或轮播图信息）
  */

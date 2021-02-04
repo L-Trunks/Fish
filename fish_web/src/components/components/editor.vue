@@ -2,7 +2,7 @@
   <div>
     <!-- quill-editor插件标签 分别绑定各个事件-->
     <quill-editor
-      v-model="content"
+      v-model="val"
       ref="myQuillEditor"
       :options="editorOption"
       @blur="onEditorBlur($event)"
@@ -39,16 +39,16 @@ export default {
   name: "editor",
   data() {
     return {
-      content: this.content, // 文章内容
+      val: this.content, // 文章内容
       uploadType: "",
       addRange: []
     };
   },
   props: {
-    // content: {
-    //   type: String,
-    //   default: ""
-    // }, // 文章内容
+    content: {
+      type: String,
+      default: ""
+    }, // 文章内容
     uploadUrl: {
       type: String,
       default: ""
@@ -136,7 +136,7 @@ export default {
 
     // 编辑器光标离开 将编辑器内容发射给父组件
     onEditorBlur(editor) {
-      this.$emit("getValue", this.content);
+      this.$emit("getValue", this.val);
     },
 
     // 编辑器获得光标
@@ -146,7 +146,7 @@ export default {
 
     // 编辑器文本发生变化
     onEditorChange({ editor, html, text }) {
-      this.$emit("getValue", this.content);
+      this.$emit("getValue", this.val);
     },
 
     // 清除编辑器内容

@@ -50,14 +50,14 @@ import {
   AddDanceSort,
   UpdateDanceSort,
   DeleteDanceSort
-} from "../../api/dance_sort_api";
+} from "../../api/category";
 import editor from "../components/editor";
 import { setImgSize } from "../../utils/util";
 import FactoryTable from "../components/FactoryTable";
 import { formatDateTime } from "../../utils/util";
 import { mapState, mapMutations, mapActions } from "vuex";
 export default {
-  name: "AcitivityManagement",
+  name: "CategoryManagement",
   data() {
     return {
       editForm: {},
@@ -235,7 +235,7 @@ export default {
             .then(_ => {
               this.editForm = {
                 ...this.editForm,
-                userid: this.userInfo._id || "",
+                userId: this.userInfo._id || "",
                 status: "0"
               };
               AddDanceSort(this.editForm)
@@ -264,7 +264,7 @@ export default {
             .then(_ => {
               this.editForm = {
                 ...this.editForm,
-                userid: this.userInfo._id || "",
+                userId: this.userInfo._id || "",
                 status: "0"
               };
               UpdateDanceSort(this.editForm)
@@ -308,7 +308,7 @@ export default {
   computed: {
     ...mapState({
       isLogin: state => state.isLogin,
-      userid: state => state.userid,
+      userId: state => state.userId,
       userInfo: state => state.userInfo,
       danceSortList: state => state.danceSortList,
       newArticleList: state => state.newArticleList,

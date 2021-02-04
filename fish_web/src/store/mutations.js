@@ -1,6 +1,6 @@
 const mutations = {
     changeUserId(state, params) {
-        state.userid = params;
+        state.userId = params;
     },
 
     changeUserInfo(state, params) {

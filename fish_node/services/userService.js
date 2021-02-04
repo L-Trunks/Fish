@@ -2,7 +2,7 @@ import mysql from '../database/mysql'
 
 //用户注册
 async function userRegister(params) {
-    let sql = `insert into f_user (user_name,pass_word,name,permission,introduce,img_url) values ('${params.userName}','${params.passWord}','${params.name}','${params.permission || 1}','${params.introduce || ''}','${params.img_url || ''}')`
+    let sql = `insert into f_user (user_name,pass_word,name,permission,introduce,img_url,ct) values ('${params.userName}','${params.passWord}','${params.name}','${params.permission || 1}','${params.introduce || ''}','${params.img_url || ''}',NOW())`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -41,7 +41,7 @@ async function verifyUserName(params) {
 
 //查询所有用户
 async function selectAllUser(params) {
-    let sql = `select id,user_name,name,permission,introduce,img_url from f_user order by ct '${params.order&&params.order&& 'asc'}' limit '${(params.page - 1) * params.limit}','${params.limit}'`
+    let sql = `select SQL_CALC_FOUND_ROWS id,user_name,name,permission,introduce,img_url from f_user order by ct '${params.order&&params.order|| 'desc'}' limit ${(params.page - 1) * params.limit},${params.limit};SELECT FOUND_ROWS() as total;`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {

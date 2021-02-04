@@ -47,7 +47,6 @@
 
 <script>
 import { GetAllUserList, UnBanUser, BanUser } from "../../api/user_api";
-import { AddMessage } from "../../api/message_api";
 import editor from "../components/editor";
 import { setImgSize } from "../../utils/util";
 import FactoryTable from "../components/FactoryTable";
@@ -382,7 +381,7 @@ export default {
   computed: {
     ...mapState({
       isLogin: state => state.isLogin,
-      userid: state => state.userid,
+      userId: state => state.userId,
       userInfo: state => state.userInfo,
       danceSortList: state => state.danceSortList,
       newUserList: state => state.newUserList,

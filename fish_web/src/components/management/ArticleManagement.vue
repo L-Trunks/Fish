@@ -226,7 +226,7 @@ export default {
   computed: {
     ...mapState({
       isLogin: state => state.isLogin,
-      userid: state => state.userid,
+      userId: state => state.userId,
       userInfo: state => state.userInfo,
       danceSortList: state => state.danceSortList,
       newArticleList: state => state.newArticleList,

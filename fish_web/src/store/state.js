@@ -1,5 +1,5 @@
 const state = {
-    userid:null,
+    userId:null,
     userInfo:null,
     categoryList:null,
     hotArticleList:null,

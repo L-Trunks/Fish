@@ -52,7 +52,7 @@
               <router-link to="/management/rotation_management">
                 <el-menu-item index="1-2">轮播图管理</el-menu-item>
               </router-link>
-              <router-link to="/management/sort_management">
+              <router-link to="/management/category_management">
                 <el-menu-item index="1-3">分类管理</el-menu-item>
               </router-link>
             </el-submenu>
@@ -167,7 +167,7 @@ export default {
   computed: {
     ...mapState({
       isLogin: (state) => state.isLogin,
-      userid: (state) => state.userid,
+      userId: (state) => state.userId,
       userInfo: (state) => state.userInfo,
       danceSortList: (state) => state.danceSortList,
       newArticleList: (state) => state.newArticleList,

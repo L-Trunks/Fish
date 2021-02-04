@@ -29,7 +29,6 @@
 
 <script>
 import VueAliplayer from "vue-aliplayer";
-import { GetAllVideoList, DeleteVideo } from "../../api/video_api";
 import editor from "../components/editor";
 import { setImgSize } from "../../utils/util";
 import FactoryTable from "../components/FactoryTable";
@@ -350,7 +349,7 @@ export default {
   computed: {
     ...mapState({
       isLogin: state => state.isLogin,
-      userid: state => state.userid,
+      userId: state => state.userId,
       userInfo: state => state.userInfo,
       danceSortList: state => state.danceSortList,
       newVideoList: state => state.newVideoList,

@@ -3,7 +3,7 @@ import errorNumber from '../config/errorNum'
 
 //添加分类
 async function addCategory(params) {
-    let sql = `insert into f_category (category_name,category_intro,user_id,status,type) values ('${params.categroyName}','${params.categoryIntro}','${params.userId}','${params.status}','${params.type}')`
+    let sql = `insert into f_category (category_name,category_intro,user_id,status,type,ct) values ('${params.categroyName}','${params.categoryIntro}','${params.userId}','${params.status}','${params.type}',NOW())`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -42,7 +42,7 @@ async function updateCategory(params) {
 
 //查询所有分类
 async function selectAllCategory(params) {
-    let sql = `select c.*,u.name from f_category where c.user_id = u.id`
+    let sql = `select SQL_CALC_FOUND_ROWS c.*,u.name from f_category where c.user_id = u.id limit ${(params.page - 1) * params.limit},${params.limit};SELECT FOUND_ROWS() as total;`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -68,7 +68,7 @@ async function selectCategoryById(params) {
 
 //根据类型查询分类
 async function selectCategoryByType(params) {
-    let sql = `select * from f_category where type  = '${params.type}'`
+    let sql = `select SQL_CALC_FOUND_ROWS * from f_category where type  = '${params.type}' limit ${(params.page - 1) * params.limit},${params.limit};SELECT FOUND_ROWS() as total;`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -81,7 +81,7 @@ async function selectCategoryByType(params) {
 
 //根据用户查询分类
 async function selectCategoryByUser(params) {
-    let sql = `select * from f_category where user_id  = '${params.userId}'`
+    let sql = `select SQL_CALC_FOUND_ROWS * from f_category where user_id  = '${params.userId}' limit ${(params.page - 1) * params.limit},${params.limit};SELECT FOUND_ROWS() as total;`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {

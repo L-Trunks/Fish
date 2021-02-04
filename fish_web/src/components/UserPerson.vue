@@ -184,7 +184,7 @@ export default {
               console.log(res);
               this.$message.success("删除成功");
               this.messagedialoading = false;
-              this.GetMessageListByUser({ userid: this.userid });
+              this.GetMessageListByUser({ userId: this.userId });
             })
             .catch(err => {
               this.messagedialoading = false;
@@ -218,7 +218,7 @@ export default {
   computed: {
     ...mapState({
       isLogin: state => state.isLogin,
-      userid: state => state.userid,
+      userId: state => state.userId,
       userInfo: state => state.userInfo,
     })
   },

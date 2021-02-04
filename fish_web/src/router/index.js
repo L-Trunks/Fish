@@ -5,7 +5,16 @@ import Main from '../views/Main.vue'
 import Login from '../components/Login.vue'
 import Register from '../components/Register.vue'
 import UserPerson from '../components/UserPerson'
-import Management from '../components/Management'
+import Management from '../components/Management.vue';
+
+import AnnounceManagement from '../components/management/AnnounceManagement.vue';
+import ArticleManagement from '../components/management/ArticleManagement.vue';
+
+import RotationManagement from '../components/management/RotationManagement.vue';
+import CategoryManagement from '../components/management/CategoryManagement.vue';
+import UserManagement from '../components/management/UserManagement.vue';
+import VideoManagement from '../components/management//VideoManagement.vue';
+
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
   return originalPush.call(this, location).catch(err => err)
@@ -44,7 +53,32 @@ const routes = [
   {
     path: "/management",
     component: Management,
-    children: []
+    children: [
+      {
+        path: '/management/announce_management',
+        component: AnnounceManagement,
+      },
+      {
+        path: '/management/article_management',
+        component: ArticleManagement,
+      },
+      {
+        path: '/management/rotation_management',
+        component: RotationManagement,
+      },
+      {
+        path: '/management/category_management',
+        component: CategoryManagement,
+      },
+      {
+        path: '/management/user_management',
+        component: UserManagement,
+      },
+      {
+        path: '/management/video_management',
+        component: VideoManagement,
+      },
+    ]
   }
 
 ]
