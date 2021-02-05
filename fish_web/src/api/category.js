@@ -1,6 +1,6 @@
 import { get, post } from './http'
 
-const url = '/api/rotationImg'
+const url = '/api/category'
 
 /**
  * 添加分类

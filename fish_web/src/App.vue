@@ -48,4 +48,11 @@ a {
   color: #67c23a;
   margin-top: 5px;
 }
+.el-dialog__body{
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.form_top{
+  margin: 10px;
+}
 </style>

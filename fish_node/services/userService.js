@@ -41,7 +41,7 @@ async function verifyUserName(params) {
 
 //查询所有用户
 async function selectAllUser(params) {
-    let sql = `select SQL_CALC_FOUND_ROWS id,user_name,name,permission,introduce,img_url from f_user order by ct '${params.order&&params.order|| 'desc'}' limit ${(params.page - 1) * params.limit},${params.limit};SELECT FOUND_ROWS() as total;`
+    let sql = `select SQL_CALC_FOUND_ROWS id,user_name,name,permission,introduce,img_url,ct from f_user order by ct desc limit ${(params.page - 1) * params.limit},${params.limit};SELECT FOUND_ROWS() as total;`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -54,7 +54,7 @@ async function selectAllUser(params) {
 
 //根据id查询用户信息
 async function selectUserById(params) {
-    let sql = `select user_name,name,permission,introduce,img_url from f_user where id = '${params.userId}'`
+    let sql = `select user_name,name,permission,introduce,img_url,ct from f_user where id = '${params.userId}'`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -67,7 +67,7 @@ async function selectUserById(params) {
 
 //根据用户名查询用户信息
 async function selectUserByUserName(params) {
-    let sql = `select id,user_name,name,permission,introduce,img_url from f_user where user_name = '${params.userName}'`
+    let sql = `select id,user_name,name,permission,introduce,img_url,ct from f_user where user_name = '${params.userName}'`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {

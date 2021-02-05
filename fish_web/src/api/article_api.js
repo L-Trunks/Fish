@@ -16,6 +16,13 @@ export const SelectAllArticleByUser = (params) => {
 }
 
 /**
+ * 根据分类获取文章
+ */
+export const SelectAllArticleByType = (params) => {
+    return get(url+'/select_all_article_by_type',params)
+}
+
+/**
  * 搜索
  */
 export const SelectArticleByLike = (params) => {

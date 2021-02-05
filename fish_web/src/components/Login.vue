@@ -136,7 +136,8 @@ export default {
   },
   watch:{
     isLogin:{
-      hanler(newval,old){
+      hanler:function(newval,old){
+        console.log(newval)
         if(newval){
           this.$router.push("/");
         }

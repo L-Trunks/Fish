@@ -22,8 +22,9 @@
       :current-page="PageConfig.page"
       :page-sizes="[8, 16, 32, 64]"
       :page-size="PageConfig.limit"
-      :total="PageConfig.total"
       layout="total,sizes, prev, pager, next"
+      :total="PageConfig.total"
+      
     ></el-pagination>
     <el-dialog
       title="公告内容预览"
@@ -56,10 +57,10 @@
         <el-form-item label="公告标题:" prop="title">
           <el-input v-model="editForm.title"></el-input>
         </el-form-item>
-        <el-form-item label="公告简介:" prop="title">
+        <el-form-item label="公告简介:" prop="info">
           <el-input v-model="editForm.info"></el-input>
         </el-form-item>
-        <el-form-item label="公告标签:" prop="title">
+        <el-form-item label="公告标签:" prop="sign">
           <el-input
             v-model="editForm.sign"
             placeholder="请输入标签，多个标签请用、分隔"
@@ -268,7 +269,7 @@ export default {
             label: "预览",
             show: true, //是否显示按钮
             className: "searchAll", //样式类名
-            type: "danger",
+            type: "info",
             disabled: false, //是否禁用按钮 默认是danger的禁用样式
             method: (index, row) => {
               this.handleShow(index, row);
@@ -332,7 +333,7 @@ export default {
     },
     handleCurrentChange(val) {
       let PageConfig = {
-        limit: this.PageConfig.page_size,
+        limit: this.PageConfig.limit,
         page: val,
       };
       this.getAnnouncementList(PageConfig);
@@ -448,7 +449,8 @@ export default {
           if (res && res.data) {
             this.list = [];
             this.list = res.data[0] || [];
-            this.PageConfig.total = res.data[1].total;
+            this.PageConfig.total = res.data[1][0].total;
+            console.log(this.PageConfig)
             setTimeout(() => {
               this.options.loading = false;
             }, 500);

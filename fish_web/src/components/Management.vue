@@ -50,7 +50,7 @@
                 <el-menu-item index="1-1">公告管理</el-menu-item>
               </router-link>
               <router-link to="/management/rotation_management">
-                <el-menu-item index="1-2">轮播图管理</el-menu-item>
+                <el-menu-item index="1-2">轮播管理</el-menu-item>
               </router-link>
               <router-link to="/management/category_management">
                 <el-menu-item index="1-3">分类管理</el-menu-item>
@@ -71,10 +71,7 @@
                 <span>内容管理</span>
               </template>
               <router-link to="/management/article_management">
-                <el-menu-item index="3-1">文章管理</el-menu-item>
-              </router-link>
-              <router-link to="/management/video_management">
-                <el-menu-item index="3-2">视频管理</el-menu-item>
+                <el-menu-item index="3-1">内容管理</el-menu-item>
               </router-link>
             </el-submenu>
           </el-menu>

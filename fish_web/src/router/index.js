@@ -13,7 +13,6 @@ import ArticleManagement from '../components/management/ArticleManagement.vue';
 import RotationManagement from '../components/management/RotationManagement.vue';
 import CategoryManagement from '../components/management/CategoryManagement.vue';
 import UserManagement from '../components/management/UserManagement.vue';
-import VideoManagement from '../components/management//VideoManagement.vue';
 
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
@@ -73,10 +72,6 @@ const routes = [
       {
         path: '/management/user_management',
         component: UserManagement,
-      },
-      {
-        path: '/management/video_management',
-        component: VideoManagement,
       },
     ]
   }

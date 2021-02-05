@@ -147,7 +147,7 @@ router.post('/select_user_by_user_name', function (req, res, next) {
 //修改用户信息
 router.post('/update_user_by_id', function (req, res, next) {
     let params = req.body
-    // let accessToken = req.get('accessToken')
+    let accessToken = req.get('accessToken')
     if (token.checkToken(accessToken)) {
         userService.updateUserById(params).then(result => {
             // console.log('数据::::' + result)

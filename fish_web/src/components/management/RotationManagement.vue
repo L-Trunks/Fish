@@ -22,8 +22,9 @@
       :current-page="PageConfig.page"
       :page-sizes="[8, 16, 32, 64]"
       :page-size="PageConfig.limit"
-      :total='PageConfig.total'
       layout="total,sizes, prev, pager, next"
+      :total='PageConfig.total'
+      
     ></el-pagination>
     <el-dialog
       title="轮播内容预览"
@@ -268,7 +269,7 @@ export default {
             label: "预览",
             show: true, //是否显示按钮
             className: "searchAll", //样式类名
-            type: "danger",
+            type: "info",
             disabled: false, //是否禁用按钮 默认是danger的禁用样式
             method: (index, row) => {
               this.handleShow(index, row);
@@ -448,7 +449,7 @@ export default {
           if (res && res.data) {
             this.list = [];
             this.list = res.data[0] || [];
-            this.PageConfig.total = res.data[1].total
+            this.PageConfig.total = res.data[1][0].total
             setTimeout(() => {
               this.options.loading = false;
             }, 500);
