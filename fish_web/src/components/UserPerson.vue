@@ -37,7 +37,7 @@
                 <el-button
                   style="margin-left:15px;"
                   size="small"
-                  v-if="userInfo && userInfo.permission =='2'||'3'"
+                  v-if="userInfo&&userInfo.permission =='2'||userInfo&&userInfo.permission =='3'"
                   type="primary"
                 >后台管理 >></el-button>
               </router-link>

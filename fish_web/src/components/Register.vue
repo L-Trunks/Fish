@@ -156,8 +156,8 @@ export default {
 
                 UserRegister(this.registerForm)
                   .then((res) => {
-                    if (res.data && res.data._id) {
-                      this.changeUserId(res.data._id);
+                    if (res.data && res.data.insertId) {
+                      this.changeUserId(res.data.insertId);
                       this.$message.success("注册成功，尝试自动登陆");
                       UserLogin({
                         userName: this.registerForm.userName,
@@ -188,6 +188,9 @@ export default {
                           this.$router.push("/login");
                           this.$message.error("登录失败，请手动登录");
                         });
+                    } else {
+                      this.$message.error("自动登录失败，请手动登录");
+                      this.$router.push("/login");
                     }
                   })
                   .catch((err) => {});
@@ -207,8 +210,9 @@ export default {
       userInfo: (state) => state.userInfo,
     }),
   },
-  isLogin: {
-    hanler(newval, old) {
+  watch: {
+    isLogin: function (newval, old) {
+      console.log(newval);
       if (newval) {
         this.$router.push("/");
       }

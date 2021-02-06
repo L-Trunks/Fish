@@ -135,14 +135,12 @@ export default {
     }),
   },
   watch:{
-    isLogin:{
-      hanler:function(newval,old){
+    isLogin:function(newval,old){
         console.log(newval)
         if(newval){
           this.$router.push("/");
         }
       }
-    }
   },
   components: {},
 };
