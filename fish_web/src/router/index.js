@@ -7,6 +7,13 @@ import Register from '../components/Register.vue'
 import UserPerson from '../components/UserPerson'
 import Management from '../components/Management.vue';
 
+import AddArticle from '../components/person/AddArticle.vue';
+import MyArticle from '../components/person/MyArticle.vue';
+
+import CollectArticle from '../components/person/CollectArticle.vue';
+import UpdateUserInfo from '../components/person/UpdateUserInfo.vue';
+import UpdateArticle from '../components/person/UpdateArticle.vue';
+
 import AnnounceManagement from '../components/management/AnnounceManagement.vue';
 import ArticleManagement from '../components/management/ArticleManagement.vue';
 
@@ -44,7 +51,26 @@ const routes = [
         path: '/person',
         component: UserPerson,
         children: [
-
+          {
+            path: '/person/add_article',
+            component: AddArticle
+          },
+          {
+            path: '/person/my_article',
+            component: MyArticle
+          },
+          {
+            path: '/person/collect_article',
+            component: CollectArticle
+          },
+          {
+            path: '/person/update_user_info',
+            component: UpdateUserInfo
+          },
+          {
+            path: '/person/update_article',
+            component: UpdateArticle
+          },
         ]
       },
     ]

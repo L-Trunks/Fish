@@ -29,7 +29,7 @@ async function deleteSettings(params) {
 
 //修改设置
 async function updateSettings(params) {
-    let sql = `update f_rotation_img set title = '${params.title}',img_url = '${params.imgUrl}',info = '${params.info}',content = '${params.content}',sign = '${params.sign}',type='${params.type}' where id = '${params.settingsId}'`
+    let sql = `update f_rotation_img set title = '${params.title}',img_url = '${params.imgUrl}',info = '${params.info}',content = '${params.content}',sign = '${params.sign}',type='${params.type}',status='${params.status}' where id = '${params.settingsId}'`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {

@@ -75,6 +75,18 @@ export const setImgSize = (htmlstr, w, h) => {
     let arr = htmlstr.replace(/<img/g, '<img width=' + w + 'px height=' + h + 'px')
     return arr
 }
+//判断设备
+//App.vue
+export const isMobile = () => {
+    let flag = window.navigator.userAgent.match(/(phone|pad|pod|iPhone|iPod|ios|iPad|Android|Mobile|BlackBerry|IEMobile|MQQBrowser|JUC|Fennec|wOSBrowser|BrowserNG|WebOS|Symbian|Windows Phone)/i)
+    if (flag && flag.length) {
+        return true;
+    } else {
+        return false
+    }
+
+}
+
 // export const getVideoImg = (url) => {
 //     let $video =
 //         '<div><video controls src="' +

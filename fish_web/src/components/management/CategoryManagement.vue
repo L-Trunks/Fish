@@ -24,7 +24,6 @@
       :page-size="PageConfig.limit"
       layout="total,sizes, prev, pager, next"
       :total="PageConfig.total"
-      
     ></el-pagination>
     <el-dialog
       :title="dialogType == 'add' ? '添加' : '编辑'"
@@ -44,6 +43,9 @@
         </el-form-item>
         <el-form-item label="介绍:" prop="categoryIntro">
           <el-input v-model="editForm.categoryIntro"></el-input>
+        </el-form-item>
+        <el-form-item label="类型:" prop="type">
+          <el-input v-model="editForm.type"></el-input>
         </el-form-item>
         <el-form-item style="width: 100%">
           <div style="margin-top: 80px">
@@ -265,6 +267,7 @@ export default {
             status = "0";
           }
           UpdateCategory({
+            ...row,
             categoryIntro: row.category_intro,
             categoryName: row.category_name,
             categoryId: row.id,

@@ -202,7 +202,7 @@ export default {
   },
   methods: {
     handleUnBan(index, row) {
-      if (row.permission !== "0") {
+      if (row.permission != "0") {
         this.$message.error("该用户未被封禁");
         return;
       }
@@ -230,7 +230,7 @@ export default {
         .catch((_) => {});
     },
     setManagement(index, row) {
-      if (row.permission == "2" || "3") {
+      if (row.permission == "2" || row.permission == "3") {
         this.$message.error("该用户已是管理员");
         return;
       }

@@ -198,16 +198,17 @@ export default {
   display: flex;
   align-items: center;
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-around;
 }
 /* .top_model_top .el-input {
   width: 50%;
 } */
 .top_model_bottom span {
-  margin: 10px 8% 0 0;
+  margin: 10px 0% 0 0;
   color: rgb(107, 107, 107);
   font-size: 14px;
   cursor: pointer;
+  white-space: nowrap;
 }
 .top {
   background: url("../../public/assets/images/1.svg") no-repeat 100% 100%;

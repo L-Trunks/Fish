@@ -1,63 +1,112 @@
 <template>
-  <div style="padding:20px">
+  <div style="padding: 20px">
     <el-form
-      :rules="articleRules"
-      ref="articleForm"
+      :rules="activityRules"
+      ref="editForm"
       :label-position="'top'"
-      :model="articleForm"
+      :model="editForm"
       label-width="80px"
     >
-      <el-form-item label="文章标题:" prop="title">
-        <el-input v-model="articleForm.title"></el-input>
+      <el-form-item label="标题:" prop="title" required>
+        <el-input v-model="editForm.title"></el-input>
       </el-form-item>
-      <el-form-item label="文章分类:" prop="sortid">
-        <el-select v-model="articleForm.sortid" placeholder="请选择文章分类">
-          <el-option
-            v-for="item in sortoptions"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          ></el-option>
+      <el-form-item label="类型:" prop="type" required>
+        <el-radio v-model="editForm.type" label="文章" border size="medium"
+          >文章</el-radio
+        >
+        <el-radio v-model="editForm.type" label="视频" border size="medium"
+          >视频</el-radio
+        >
+      </el-form-item>
+      <el-form-item label="分类" prop="type" filterable>
+        <el-select v-model="editForm.categoryId" placeholder="请选择分类">
+          <div v-for="(item, index) in categoryOptions" :key="index">
+            <el-option
+              :label="item.label"
+              :selected="item.value === editForm.categoryId"
+              :value="item.value"
+            ></el-option>
+          </div>
         </el-select>
       </el-form-item>
-      <el-form-item style="width:100%;">
-        <el-button-group style="padding-bottom:20px">
-          <el-button
-            size="small"
-            :type="editorType=='0'?'primary':''"
-            @click="changeEditor('0')"
-          >富文本编辑器</el-button>
-          <el-button
-            size="small"
-            :type="editorType=='1'?'primary':''"
-            @click="changeEditor('1')"
-          >MarkDown编辑器</el-button>
-        </el-button-group>
+      <el-form-item label="标签:" prop="sign">
+        <el-input
+          v-model="editForm.sign"
+          placeholder="请输入标签，多个标签请用、分隔"
+        ></el-input>
+      </el-form-item>
+      <el-form-item label="封面:">
+        <el-upload
+          class="upload-demo"
+          :action="uploadUrl"
+          :on-success="handleImgSuccess"
+          :on-remove="handleImgRemove"
+          :file-list="fileImgList"
+          list-type="picture"
+          :limit="1"
+          :on-exceed="handleImgExceed"
+        >
+          <el-button size="small" type="primary">点击上传</el-button>
+          <div slot="tip" class="el-upload__tip">
+            只能上传jpg/png文件，且不超过1mb
+          </div>
+        </el-upload>
+      </el-form-item>
+      <el-form-item v-if="editForm.type == '视频'" label="视频:">
+        <el-upload
+          class="upload-demo"
+          :action="uploadVideoUrl"
+          :on-success="handleVideoSuccess"
+          :on-remove="handleVideoRemove"
+          :file-list="fileVideoList"
+          list-type="picture-card"
+          :limit="1"
+          :on-exceed="handleVideoExceed"
+        >
+          <el-button size="small" type="primary">点击上传</el-button>
+          <div slot="tip" class="el-upload__tip">只能上传视频文件</div>
+        </el-upload>
+      </el-form-item>
+      <el-form-item
+        label="内容:"
+        v-if="editForm.type == '文章'"
+        style="width: 100%"
+        required
+      >
         <editor
-          v-if="editorType==='0'"
           :uploadUrl="uploadUrl"
           @getValue="showContent"
-          v-model="content"
+          :content="content"
         ></editor>
-        <mark-down-editor
-          :uploadUrl="uploadUrl"
-          v-if="editorType==='1'"
-          @getValue="showMDContent"
-          v-model="content"
-        ></mark-down-editor>
       </el-form-item>
-      <el-form-item style="width:100%;">
-        <div style="margin-top:80px">
-          <el-button type="danger" icon="el-icon-s-promotion" @click="submit('articleForm')">提交</el-button>
-          <el-button type="info" icon="el-icon-view" @click="showArticle">预览</el-button>
+      <el-form-item style="width: 100%">
+        <div style="margin-top: 80px">
+          <el-button
+            type="danger"
+            icon="el-icon-s-promotion"
+            @click="addSubmit('editForm')"
+            >提交</el-button
+          >
         </div>
       </el-form-item>
     </el-form>
 
-    <el-dialog title="文章内容预览" :loading="dialoading" :visible.sync="dialogVisible" width="100%">
-      <div v-html="articleForm.article"></div>
+    <el-dialog
+      title="内容预览"
+      :loading="dialoading"
+      :visible.sync="dialogVisible"
+      width="60%"
+    >
+      <div
+        class="show_content"
+        v-html="showIntroduce"
+        v-if="showType == '文章'"
+      ></div>
+      <div class="prism-player" id="player-con" v-if="showType == '视频'"></div>
       <span slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="dialogVisible = false">确 定</el-button>
+        <el-button type="primary" @click="dialogVisible = false"
+          >确 定</el-button
+        >
       </span>
     </el-dialog>
   </div>
@@ -65,8 +114,14 @@
 
 <script>
 import editor from "../components/editor";
-import MarkDownEditor from "../components/MarkDownEditor";
-import { AddArticle } from "../../api/article_api";
+import {
+  SelectAllArticle,
+  SelectAllArticleByType,
+  DeleteArticle,
+  AddArticle,
+  UpdateArticle,
+} from "../../api/article_api";
+import { SelectAllCategory, SelectCategoryByType } from "../../api/category";
 import { mapState, mapMutations, mapActions } from "vuex";
 import { setImgSize } from "../../utils/util";
 import { PageConfig } from "../../utils/tools";
@@ -76,140 +131,124 @@ export default {
     return {
       dialoading: false,
       dialogVisible: false,
-      articleForm: {
-        nickname: "",
-        userid: "",
-        articlepermission: ""
-      },
-      PageConfig,
-      articleContent: "",
-      articleRules: {
-        title: [{ required: true, message: "请输入文章标题", trigger: "blur" }],
-        sortid: [{ required: true, message: "请选择分类", trigger: "blur" }]
-      },
-      editorType: "0",
-      content: "", // 文章内容
-      editorOption: {}, // 编辑器选项
-      addRange: [],
-      sortoptions: [],
+      editForm: {},
+      fileImgList: [],
+      content: "",
       uploadUrl: "/api/upload/image",
-      uploadType: "", // 上传的文件类型（图片、视频）
-      fullscreenLoading: false
+      uploadVideoUrl: "/api/upload/video",
+      showIntroduce: "",
+      list: [], // table数据
+      fileImgList: [],
+      fileVideoList: [],
+      showType: "文章",
+      addForm: {},
+      PageConfig: {
+        limit: 8,
+        page: 1,
+        total: 0,
+      },
+      articleType: "",
+      categoryOptions: [],
+      categoryId: null,
+      activityRules: {
+        title: [{ required: true, message: "请输入文章标题", trigger: "blur" }],
+      },
     };
   },
   mounted() {
-    this.formatSort();
+    this.getAllCategory();
   },
   methods: {
-    ...mapActions([
-      "GetAllDanceSortList",
-      "GetAllArticleList",
-      "GetAllVideoList",
-      "GetAllRotationImgList"
-    ]),
-    showArticle() {
-      this.dialoading = true;
-      
-      this.dialogVisible = true;
-      this.dialoading = false;
+    handleImgRemove(file, fileList) {
+      this.editForm.imgUrl = "";
     },
-    //提交文章
-    submit(formname) {
-      this.$refs[formname].validate(valid => {
+    handleImgSuccess(file) {
+      this.editForm.imgUrl = file.data.url;
+    },
+    handleImgExceed() {
+      this.$message.error("只允许上传一张封面");
+    },
+    handleVideoRemove(file, fileList) {
+      this.editForm.content = "";
+    },
+    handleVideoSuccess(file) {
+      this.editForm.content = file.data.url;
+    },
+    handleVideoExceed() {
+      this.$message.error("只允许上传一个视频");
+    },
+    showContent(val) {
+      this.editForm.content = setImgSize(val, 600, 350);
+    },
+    addSubmit(formname) {
+      this.$refs[formname].validate((valid) => {
         if (valid) {
           this.$confirm("确定提交吗？")
-            .then(_ => {
-              this.articleForm = {
-                ...this.articleForm,
-                nickname: this.userInfo.nickname,
-                userid: this.userid,
-                articlepermission: 1
+            .then((_) => {
+              this.editForm = {
+                ...this.editForm,
+                userId: this.userInfo.id || "",
               };
-              AddArticle(this.articleForm)
-                .then(res => {
-                  
-                  this.articleForm = {
-                    nickname: "",
-                    userid: "",
-                    articlepermission: ""
-                  };
-
-                  this.GetAllArticleList(this.PageConfig);
+              AddArticle(this.editForm)
+                .then((res) => {
+                  this.editForm = {};
+                  this.editDialogVisible = false;
+                  this.content = "";
+                  this.fileImgList = [];
+                  this.fileVideoList = [];
                   this.$message.success("发布成功，快去看看吧");
-                  // this.$router.push({
-                  //   path: "/article_detail",
-                  //   query: { articleid: res[0]._id }
-                  // });
                 })
-                .catch(err => {
-                  
+                .catch((err) => {
                   this.$message.error("出现错误，请稍候再试");
                 });
             })
-            .catch(_ => {});
+            .catch((_) => {});
         } else {
           return false;
         }
       });
     },
-
-    //格式化分类列表
-    formatSort() {
-      this.sortoptions = [];
-      this.danceSortList &&
-        this.danceSortList.map(i => {
-          this.sortoptions.push({ value: i._id, label: i.sortname });
-        });
-
-      if (this.sortoptions == 0) {
-        this.GetAllDanceSortList();
-      }
-    },
-    changeEditor(e) {
-      
-      this.$confirm("已编辑内容将会删除，确认切换吗？")
-        .then(_ => {
-          this.editorType = e;
+    getAllCategory() {
+      let _this = this;
+      SelectAllCategory({
+        page: 1,
+        limit: 999999,
+      })
+        .then((res) => {
+          if (res && res.data && res.data.length) {
+            this.categoryOptions = [];
+            res.data[0].map((i) => {
+              this.categoryOptions.push({
+                label: i.category_name,
+                value: i.id,
+              });
+            });
+          }
         })
-        .catch(_ => {});
+        .catch((err) => {
+          this.$message.error("出现错误，请稍候再试");
+        });
     },
-    showMDContent(val) {
-      this.articleForm.article = setImgSize(val, 600, 350);
-    },
-    showContent(val) {
-      this.articleForm.article = setImgSize(val, 600, 350);
-    }
   },
   computed: {
     ...mapState({
-      isLogin: state => state.isLogin,
-      userid: state => state.userid,
-      userInfo: state => state.userInfo,
-      danceSortList: state => state.danceSortList,
-      newArticleList: state => state.newArticleList,
-      newVideoList: state => state.newVideoList,
-      messageList: state => state.messageList,
-      videoResult: state => state.videoResult,
-      articleResult: state => state.articleResult,
-      rotationImgList: state => state.rotationImgList,
-      articleCollectList: state => state.articleCollectList,
-      videoCollectList: state => state.videoCollectList
-    })
+      isLogin: (state) => state.isLogin,
+      userid: (state) => state.userid,
+      userInfo: (state) => state.userInfo,
+    }),
   },
-  watch: {
-    danceSortList: {
-      handler(newval, old) {
-        
-        this.formatSort();
-      },
-      deep: true
-    }
-  },
+  watch: {},
   components: {
     editor,
-    MarkDownEditor
-  }
+  },
 };
 </script>
-<style scoped>
+<style>
+.show_content {
+  overflow-y: auto;
+  height: auto;
+}
+</style>
+<style lang="postcss" scoped>
+@import "https://g.alicdn.com/de/prismplayer/2.8.8/skins/default/aliplayer-min.css";
 </style>

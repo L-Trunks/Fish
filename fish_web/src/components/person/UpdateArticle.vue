@@ -39,12 +39,6 @@
           @getValue="showContent"
           v-model="content"
         ></editor>
-        <mark-down-editor
-          :uploadUrl="uploadUrl"
-          v-if="editorType==='1'"
-          @getValue="showMDContent"
-          v-model="content"
-        ></mark-down-editor>
       </el-form-item>
       <el-form-item style="width:100%;">
         <div style="margin-top:80px">
@@ -65,7 +59,6 @@
 
 <script>
 import editor from "../components/editor";
-import MarkDownEditor from "../components/MarkDownEditor";
 import { AddArticle,GetArticleInfoById } from "../../api/article_api";
 import { mapState, mapMutations, mapActions } from "vuex";
 import { dateTimeStamp, formatDateTime, getFirstPic,setImgSize } from "../../utils/util";
@@ -229,7 +222,7 @@ export default {
   },
   components: {
     editor,
-    MarkDownEditor
+    
   }
 };
 </script>

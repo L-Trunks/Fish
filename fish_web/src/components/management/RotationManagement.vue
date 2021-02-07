@@ -333,7 +333,7 @@ export default {
     },
     handleCurrentChange(val) {
       let PageConfig = {
-        limit: this.PageConfig.page_size,
+        limit: this.PageConfig.limit,
         page: val ,
       };
       this.getRotationList(PageConfig);
