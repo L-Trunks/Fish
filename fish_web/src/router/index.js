@@ -7,6 +7,9 @@ import Register from '../components/Register.vue'
 import UserPerson from '../components/UserPerson'
 import Management from '../components/Management.vue';
 
+import ArticleDetail from '../components/ArticleDetail.vue';
+import VideoDetail from '../components/VideoDetail.vue';
+
 import AddArticle from '../components/person/AddArticle.vue';
 import MyArticle from '../components/person/MyArticle.vue';
 import MyVideo from '../components/person/MyVideo.vue';
@@ -83,6 +86,14 @@ const routes = [
           },
         ]
       },
+      {
+        path: '/article_detail',
+        component: ArticleDetail
+      },
+      {
+        path: '/video_detail',
+        component: VideoDetail
+      },
     ]
   },
   {
@@ -110,7 +121,8 @@ const routes = [
         component: UserManagement,
       },
     ]
-  }
+  },
+
 
 ]
 

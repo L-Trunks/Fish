@@ -475,7 +475,7 @@ export default {
         userId: this.userId,
       };
       console.log(this.editForm);
-      this.fileImgList = [{ name: "xx.jpg", url: row.imgUrl }];
+      this.fileImgList = [{ name: "xx.jpg", url: row.img_url }];
       this.content = row.content;
       this.editDialogVisible = true;
     },
@@ -605,7 +605,7 @@ export default {
       this.dialogVisible = true;
     },
     showContent(val) {
-      this.editForm.content = setImgSize(val, 600, 350);
+      this.editForm.content = setImgSize(val, '100%', '100%');
     },
     addArticle() {
       this.dialogType = "add";

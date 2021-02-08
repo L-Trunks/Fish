@@ -181,7 +181,7 @@ export default {
       this.$message.error("只允许上传一个视频");
     },
     showContent(val) {
-      this.editForm.content = setImgSize(val, 600, 350);
+      this.editForm.content = setImgSize(val, '100%', '100%');
     },
     handleShow() {
       this.dialoading = true;

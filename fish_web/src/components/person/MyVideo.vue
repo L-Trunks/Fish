@@ -8,6 +8,7 @@
         :body-style="{ padding: '0px' }"
       >
         <div
+          @click="showDetail(item)"
           :style="{
             background: 'url(' + item.img_url + ') no-repeat center center',
             backgroundSize: '100% 100%',
@@ -27,8 +28,8 @@
             </time>
             <br />
             <div style="margin-top: 5px">
-              <el-button type="info" @click="showDetail(item)" size="mini"
-                >查看</el-button
+              <el-button type="info" @click="updateArticle(item)" size="mini"
+                >编辑</el-button
               >
               <el-button type="danger" @click="deleteArticle(item)" size="mini"
                 >删除</el-button
@@ -84,7 +85,11 @@ export default {
   },
   created() {
     if (this.userId) {
-      this.GetArticleListByUser({ ...this.PageConfig, userId: this.userId });
+      this.GetArticleListByUser({
+        ...this.PageConfig,
+        userId: this.userId,
+        type: "视频",
+      });
     }
   },
   mounted() {
@@ -107,6 +112,7 @@ export default {
               this.GetArticleListByUser({
                 ...this.PageConfig,
                 userId: this.userId,
+                type: "视频",
               });
             })
             .catch((err) => {
@@ -117,20 +123,14 @@ export default {
     },
     showDetail(data) {
       this.$router.push({
-        path: "/video",
+        path: "/video_detail",
         query: { videoid: data.id },
       });
     },
     formatArticleList() {
       this.articleLoading = true;
-      let list =
-        (this.userArticleList &&
-          this.userArticleList.data &&
-          this.userArticleList.data.filter((i) => {
-            return i.type == "视频";
-          })) ||
-        [];
-      this.PageConfig.total = list.length || 0;
+      let list = this.userArticleList && this.userArticleList.data&& this.userArticleList.data ||[];
+      this.PageConfig.total = this.userArticleList.total || 0;
       this.list = [];
       list.map((i) => {
         i.img_url =
@@ -149,14 +149,22 @@ export default {
         limit: val,
         page: this.articlePageConfig.page,
       };
-      this.GetArticleListByUser({ ...PageConfig, userId: this.userId });
+      this.GetArticleListByUser({
+        ...PageConfig,
+        userId: this.userId,
+        type: "视频",
+      });
     },
     handleCurrentChange(val) {
       let PageConfig = {
         limit: this.articlePageConfig.limit,
         page: val,
       };
-      this.GetArticleListByUser({ ...PageConfig, userId: this.userId });
+      this.GetArticleListByUser({
+        ...PageConfig,
+        userId: this.userId,
+        type: "视频",
+      });
     },
   },
   watch: {

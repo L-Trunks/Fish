@@ -10,7 +10,7 @@
         <div
           @click="showDetail(item)"
           :style="{
-            background: 'url(' + item.img_url + ') no-repeat center center',
+            background: 'url(' + item.aimg_url + ') no-repeat center center',
             backgroundSize: '100% 100%',
             width: '100%',
             height: '200px',
@@ -153,8 +153,8 @@ export default {
       this.PageConfig.total = (this.collectList && this.collectList.total) || 0;
       this.list = [];
       list.map((i) => {
-        i.img_url =
-          i.img_url ||
+        i.aimg_url =
+          i.aimg_url ||
           getFirstPic(i.content || "") ||
           "http://localhost:8888/public/images/noimage.jpg";
         i.ct = formatDateTime(dateTimeStamp(i.ct));

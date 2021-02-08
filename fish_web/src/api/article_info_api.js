@@ -4,7 +4,7 @@ const url = '/api/article_info'
 /**
  * 添加文章信息(添加点赞、评论、收藏信息)
  */
-export const addArticleInfo = (params) => {
+export const AddArticleInfo = (params) => {
     return post(url + '/add_article_info', params)
 }
 
@@ -41,6 +41,13 @@ export const SelectArticleInfoById = (params) => {
  */
 export const SelectArticleInfoByUser = (params) => {
     return get(url + '/select_article_info_by_user', params)
+}
+
+/**
+ * 根据文章和用户查询文章信息
+ */
+export const SelectArticleInfoByArticleAndUser = (params) => {
+    return get(url + '/select_article_info_by_article_and_user', params)
 }
 
 /**

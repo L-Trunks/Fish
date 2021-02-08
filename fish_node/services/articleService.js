@@ -10,7 +10,7 @@ async function addArticle(params) {
             reject(data)
         } else {
             resolve(data)
-        } 
+        }
     })
 }
 
@@ -23,7 +23,7 @@ async function deleteArticle(params) {
             reject(data)
         } else {
             resolve(data)
-        } 
+        }
     })
 }
 
@@ -36,7 +36,7 @@ async function updateArticle(params) {
             reject(data)
         } else {
             resolve(data)
-        } 
+        }
     })
 }
 
@@ -49,26 +49,39 @@ async function updateArticleCount(params) {
             reject(data)
         } else {
             resolve(data)
-        } 
+        }
     })
 }
 
 //浏览量+1
 async function updateArticleLooksCount(params) {
-    let sql = `update f_article set looks_count = '${+params.looksCount+1}' where id = '${params.articleId}'`
+    let sql = `update f_article set looks_count = '${+params.looksCount + 1}' where id = '${params.articleId}'`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
             reject(data)
         } else {
             resolve(data)
-        } 
+        }
     })
 }
 
 //查询所有文章
 async function selectAllArticle(params) {
     let sql = `select SQL_CALC_FOUND_ROWS a.*,u.user_name,u.name,c.category_name from f_article a,f_user u,f_category c where a.category_id = c.id and a.user_id = u.id order by a.ct desc limit ${((params.page - 1)) * params.limit},${params.limit};SELECT FOUND_ROWS() as total;`
+    let data = await mysql.execute(sql)
+    return new Promise((resolve, reject) => {
+        if (data && data.errno) {
+            reject(data)
+        } else {
+            resolve(data)
+        }
+    })
+}
+
+//根据类型查询文章
+async function selectArticleByType(params) {
+    let sql = `select SQL_CALC_FOUND_ROWS a.*,u.user_name,u.name,c.category_name from f_article a,f_user u,f_category c where a.category_id = c.id and a.user_id = u.id and a.type='${params.type}' order by a.ct desc limit ${((params.page - 1)) * params.limit},${params.limit};SELECT FOUND_ROWS() as total;`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -133,13 +146,14 @@ async function selectArticleByLike(params) {
 
 module.exports = {
     addArticle: addArticle,
-    deleteArticle:deleteArticle,
-    updateArticle:updateArticle,
-    updateArticleCount:updateArticleCount,
-    updateArticleLooksCount:updateArticleLooksCount,
-    selectArticleByLike:selectArticleByLike,
-    selectArticleById:selectArticleById,
-    selectAllArticle:selectAllArticle,
-    selectAllArticleByUser:selectAllArticleByUser,
-    selectAllArticleByType:selectAllArticleByType
+    deleteArticle: deleteArticle,
+    updateArticle: updateArticle,
+    updateArticleCount: updateArticleCount,
+    updateArticleLooksCount: updateArticleLooksCount,
+    selectArticleByLike: selectArticleByLike,
+    selectArticleById: selectArticleById,
+    selectAllArticle: selectAllArticle,
+    selectArticleByType:selectArticleByType,
+    selectAllArticleByUser: selectAllArticleByUser,
+    selectAllArticleByType: selectAllArticleByType
 }

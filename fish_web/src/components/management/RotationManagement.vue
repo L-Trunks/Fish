@@ -370,7 +370,7 @@ export default {
       this.dialoading = false;
     },
     showContent(val) {
-      this.editForm.content = setImgSize(val, 600, 350);
+      this.editForm.content = setImgSize(val, '100%', '100%');
     },
     addRotation() {
       this.dialogType = "add";

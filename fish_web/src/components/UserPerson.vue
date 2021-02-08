@@ -29,10 +29,10 @@
             </el-col>
             <el-col class="" :xs="24">
               <div>
-                <el-badge :value="0" class="item">
+                <el-badge :value="collCount.length||0" class="item">
                   <el-button size="small">收藏</el-button>
                 </el-badge>
-                <el-badge :value="0" class="item">
+                <el-badge :value="goodsCount.length||0" class="item">
                   <el-button size="small">点赞</el-button>
                 </el-badge>
                 <el-badge :value="0" class="item">
@@ -140,6 +140,8 @@ export default {
       messagedialoading: false,
       messagedialogVisible: false,
       selectMessage: "",
+      collCount:[],
+      goodsCount:[],
       updateUserForm: {
         phone: "",
         introduce: "",
@@ -159,11 +161,12 @@ export default {
       permissionMap,
     };
   },
-  created() {},
+  created() {
+  },
   mounted() {
     this.userData = this.userInfo;
     this.$router.push("/person");
-    this.isCollapse = isMobile();
+    // this.isCollapse = isMobile();
   },
   methods: {
     ...mapMutations([
@@ -180,7 +183,7 @@ export default {
       "GetAllDanceSortList",
       "GetAllArticleList",
       "GetAllVideoList",
-      "GetAllRotationImgList",
+      "GetCollectList",
     ]),
     showMessage() {
       console.log(this.messagedialogVisible);
@@ -235,6 +238,7 @@ export default {
       isLogin: (state) => state.isLogin,
       userId: (state) => state.userId,
       userInfo: (state) => state.userInfo,
+      collectList: (state) => state.collectList,
     }),
   },
   watch: {
@@ -249,14 +253,6 @@ export default {
           this.$router.push("/");
         }
         this.userData = newval;
-      },
-      deep: true,
-    },
-    messageList: {
-      handler(newval, old) {
-        newval.map((i) => {
-          i.createtime = formatDateTime(i.createtime);
-        });
       },
       deep: true,
     },
@@ -296,7 +292,7 @@ export default {
   margin-left: 15px;
 }
 .el-menu {
-  min-height: 418px;
+  min-height: 518px;
 }
 @media (max-width: 768px) {
   .person_box {

@@ -72,7 +72,7 @@ export const getimgsrc = (htmlstr) => {
 
 //设置图片大小
 export const setImgSize = (htmlstr, w, h) => {
-    let arr = htmlstr.replace(/<img/g, '<img width=' + w + 'px height=' + h + 'px')
+    let arr = htmlstr.replace(/<img/g, '<img width=' + w + ' height=' + h )
     return arr
 }
 //判断设备

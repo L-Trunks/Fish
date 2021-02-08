@@ -99,6 +99,24 @@ router.get('/update_article_looks_count', function (req, res, next) {
     // }
 });
 
+router.get('/select_article_by_type', function (req, res, next) {
+    // let accessToken = req.get('accessToken')
+    let params = req.query
+    // console.log(params)
+    // if (token.checkToken(accessToken)) {
+    articleService.selectArticleByType(params).then(result => {
+        // console.log('数据::::' + result)
+        res.json({ code: '200', data: result })
+    }).catch(err => {
+        console.log('出现错误:' + JSON.stringify(err))
+        next(err);
+        res.json({ code: '200', desc: '服务器跑丢了' })
+    })
+    // } else {
+    //     res.json(errorNumber.TOKEN_TIME_OUT())
+    // }
+});
+
 //查询所有文章
 router.get('/select_all_article', function (req, res, next) {
     // let accessToken = req.get('accessToken')

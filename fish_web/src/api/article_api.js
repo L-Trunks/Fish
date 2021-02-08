@@ -16,6 +16,12 @@ export const SelectAllArticleByUser = (params) => {
 }
 
 /**
+ * 根据类型获取文章
+ */
+export const SelectArticleByType = (params) => {
+    return get(url+'/select_article_by_type',params)
+}
+/**
  * 根据分类获取文章
  */
 export const SelectAllArticleByType = (params) => {
@@ -68,5 +74,5 @@ export const UpdateArticleLooksCount = (params) => {
  * 修改点赞评论收藏数
  */
 export const UpdateArticleCount = (params) => {
-    return get(url+'/update_article_count',params)
+    return post(url+'/update_article_count',params)
 }

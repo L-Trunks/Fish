@@ -1,6 +1,6 @@
 import { SelectUserById } from '../api/user_api'
 import { SelectAllCategory } from '../api/category'
-import { SelectAllArticle, SelectArticleByLike, SelectAllArticleByUser } from '../api/article_api'
+import { SelectAllArticle, SelectArticleByLike, SelectAllArticleByUser,SelectArticleByType } from '../api/article_api'
 import { SelectArticleInfoByUser } from '../api/article_info_api'
 import { SelectSettingsByType } from '../api/settings'
 import { Form } from 'element-ui'
@@ -48,7 +48,7 @@ const actions = {
         })
     },
     GetArticleListByUser(context, params) {
-        SelectAllArticleByUser(params).then(res => {
+        SelectArticleByType(params).then(res => {
             context.commit('changeUserArticleList', { data: res.data[0], total: res.data[1][0].total });
         }).catch(err => {
             console.log(err)
