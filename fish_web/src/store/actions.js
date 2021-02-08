@@ -1,7 +1,9 @@
 import { SelectUserById } from '../api/user_api'
 import { SelectAllCategory } from '../api/category'
-import { SelectAllArticle,SelectArticleByLike } from '../api/article_api'
-import {SelectSettingsByType} from '../api/settings'
+import { SelectAllArticle, SelectArticleByLike, SelectAllArticleByUser } from '../api/article_api'
+import { SelectArticleInfoByUser } from '../api/article_info_api'
+import { SelectSettingsByType } from '../api/settings'
+import { Form } from 'element-ui'
 const actions = {
     //改变用户信息actions
     GetUserInfoById(context, params) {
@@ -41,6 +43,23 @@ const actions = {
     SelectAllArticle(context, params) {
         SelectAllArticle(params).then(res => {
             context.commit('changeArticleList', res.data);
+        }).catch(err => {
+            console.log(err)
+        })
+    },
+    GetArticleListByUser(context, params) {
+        SelectAllArticleByUser(params).then(res => {
+            context.commit('changeUserArticleList', { data: res.data[0], total: res.data[1][0].total });
+        }).catch(err => {
+            console.log(err)
+        })
+    },
+    GetCollectList(context, params) {
+        SelectArticleInfoByUser(params).then(res => {
+            let data = res.data.filter(i => {
+                return i.info_type == params.type
+            })
+            context.commit('changeCollectList', { data: data, total: data.length || 0 });
         }).catch(err => {
             console.log(err)
         })

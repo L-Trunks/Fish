@@ -8,22 +8,31 @@
         :body-style="{ padding: '0px' }"
       >
         <div
-          :style="{ background: 'url('+item.imgurl+') no-repeat center center', backgroundSize: '100% 100%',width:'100%',height:'200px'}"
+          :style="{
+            background: 'url(' + item.img_url + ') no-repeat center center',
+            backgroundSize: '100% 100%',
+            width: '100%',
+            height: '200px',
+          }"
         >
           <div class="demo"></div>
         </div>
-        <div style="padding: 14px;">
-          <span class="title_art">{{item.title}}</span>
+        <div style="padding: 14px">
+          <span class="title_art">{{ item.title }}</span>
           <div class="bottom clearfix">
             <time class="time">
-              {{ item.createtime }}
+              {{ item.ct }}
               <br />
-              分类:{{item.sortname}}
+              分类:{{ item.category_name }}
             </time>
             <br />
-            <div style="margin-top:5px">
-              <el-button type="info" @click="showDetail(item)" size="mini">查看</el-button>
-              <el-button type="danger" @click="deleteArticle(item)" size="mini">删除</el-button>
+            <div style="margin-top: 5px">
+              <el-button type="info" @click="showDetail(item)" size="mini"
+                >查看</el-button
+              >
+              <el-button type="danger" @click="deleteArticle(item)" size="mini"
+                >删除</el-button
+              >
             </div>
           </div>
         </div>
@@ -31,13 +40,13 @@
     </div>
 
     <el-pagination
-      style="margin:15px"
+      style="margin: 15px"
       background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="PageConfig.page_no"
+      :current-page="PageConfig.page"
       :page-sizes="[8, 16, 32, 64]"
-      :page-size="PageConfig.page_size"
+      :page-size="PageConfig.limit"
       layout="total,sizes, prev, pager, next"
       :total="PageConfig.total"
       :hide-on-single-page="true"
@@ -47,120 +56,126 @@
 
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
-import { GetArticleListByUser, DeleteArticle } from "../../api/article_api";
+import { SelectAllArticleByUser, DeleteArticle } from "../../api/article_api";
 import { PageConfig } from "../../utils/tools";
 import {
   getFirstPic,
   dateTimeStamp,
   formatDateTime,
-  getVideoImg
+  getVideoImg,
 } from "../../utils/util";
 export default {
   name: "MyArticle",
   data() {
     return {
       articlePageConfig: {
-        page_size: 8,
-        page_no: 1,
-        total: 0
+        limit: 8,
+        page: 1,
+        total: 0,
       },
-      PageConfig,
+      PageConfig: {
+        limit: 8,
+        page: 1,
+        total: 0,
+      },
       list: [],
-      articleLoading:false
+      articleLoading: false,
     };
   },
   created() {
-    if (this.userid) {
-      this.GetArticleListByUser({ ...this.PageConfig, userid: this.userid });
+    if (this.userId) {
+      this.GetArticleListByUser({ ...this.PageConfig, userId: this.userId });
     }
   },
   mounted() {
     this.formatArticleList();
   },
   methods: {
-    ...mapActions(["GetArticleListByUser","GetAllArticleList"]),
+    ...mapActions(["GetArticleListByUser", "GetAllArticleList"]),
     updateArticle(data) {
       this.$router.push({
         path: "/person/update_article",
-        query: { articleid: data._id }
+        query: { articleid: data.id },
       });
     },
     deleteArticle(data) {
       this.$confirm("确定删除该文章”" + data.title + "“吗？")
-        .then(_ => {
-          DeleteArticle({ _id: data._id })
-            .then(res => {
-              
+        .then((_) => {
+          DeleteArticle({ articleId: data.id })
+            .then((res) => {
               this.$message.success("删除成功");
               this.GetArticleListByUser({
                 ...this.PageConfig,
-                userid: this.userid
+                userId: this.userId,
               });
             })
-            .catch(err => {
-              
+            .catch((err) => {
               this.$message.error("删除失败，请稍候再试");
             });
         })
-        .catch(_ => {});
+        .catch((_) => {});
     },
     showDetail(data) {
       this.$router.push({
         path: "/article_detail",
-        query: { articleid: data._id }
+        query: { articleid: data.id },
       });
     },
     formatArticleList() {
       this.articleLoading = true;
-      let list = (this.articleList && this.articleList.data) || [];
-      this.PageConfig.total = (this.articleList && this.articleList.total) || 0;
+      let list =
+        (this.userArticleList &&
+          this.userArticleList.data &&
+          this.userArticleList.data.filter((i) => {
+            return i.type == "文章";
+          })) ||
+        [];
+      this.PageConfig.total = list.length || 0;
       this.list = [];
-      list.map(i => {
-        i.imgurl =
-          getFirstPic(i.article) ||
+      list.map((i) => {
+        i.img_url =
+          i.img_url ||
+          getFirstPic(i.content) ||
           "http://localhost:8888/public/images/noimage.jpg";
-        i.createtime = formatDateTime(dateTimeStamp(i.createtime));
-        i.nickname = (i.articleUser[0] && i.articleUser[0].nickname) || "";
-        i.sortname = i.articleSort[0].sortname || "";
+        i.ct = formatDateTime(dateTimeStamp(i.ct));
+        i.name = i.user_name || "";
         this.list.push(i);
       });
-      
+
       this.articleLoading = false;
     },
     handleSizeChange(val) {
       let PageConfig = {
-        page_size: val,
-        page_no: this.articlePageConfig.page_no - 1
+        limit: val,
+        page: this.articlePageConfig.page,
       };
-      this.GetArticleListByUser({ ...PageConfig, userid: this.userid });
+      this.GetArticleListByUser({ ...PageConfig, userId: this.userId });
     },
     handleCurrentChange(val) {
       let PageConfig = {
-        page_size: this.articlePageConfig.page_size,
-        page_no: val - 1
+        limit: this.articlePageConfig.limit,
+        page: val,
       };
-      this.GetArticleListByUser({ ...PageConfig, userid: this.userid });
-    }
+      this.GetArticleListByUser({ ...PageConfig, userId: this.userId });
+    },
   },
   watch: {
-    articleList: {
+    userArticleList: {
       handler(newval, old) {
-        
         this.formatArticleList();
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   computed: {
     ...mapState({
-      isLogin: state => state.isLogin,
-      userid: state => state.userid,
-      userInfo: state => state.userInfo,
-      danceSortList: state => state.danceSortList,
-      articleList: state => state.articleList,
-      newVideoList: state => state.newVideoList
-    })
-  }
+      isLogin: (state) => state.isLogin,
+      userId: (state) => state.userId,
+      userInfo: (state) => state.userInfo,
+      userArticleList: (state) => state.userArticleList,
+      newVideoList: (state) => state.newVideoList,
+    }),
+  },
 };
 </script>
 <style scoped>
@@ -235,5 +250,11 @@ export default {
   /* justify-content: space-around; */
   flex-direction: row;
   flex-wrap: wrap;
+}
+@media (max-width: 768px) {
+  .card {
+    margin: 10px;
+    width: 44%;
+  }
 }
 </style>

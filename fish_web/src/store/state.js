@@ -5,6 +5,8 @@ const state = {
     hotArticleList:null,
     newArticleList:null,
     articleList:[],
+    userArticleList:[],
+    collectList:[],
     articleCollectList:[],
     rotationImgList:null,
     articleResult:null,

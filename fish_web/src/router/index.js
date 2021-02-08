@@ -9,8 +9,10 @@ import Management from '../components/Management.vue';
 
 import AddArticle from '../components/person/AddArticle.vue';
 import MyArticle from '../components/person/MyArticle.vue';
+import MyVideo from '../components/person/MyVideo.vue';
 
 import CollectArticle from '../components/person/CollectArticle.vue';
+import GoodsArticle from '../components/person/GoodsArticle.vue';
 import UpdateUserInfo from '../components/person/UpdateUserInfo.vue';
 import UpdateArticle from '../components/person/UpdateArticle.vue';
 
@@ -60,8 +62,16 @@ const routes = [
             component: MyArticle
           },
           {
+            path: '/person/my_video',
+            component: MyVideo
+          },
+          {
             path: '/person/collect_article',
             component: CollectArticle
+          },
+          {
+            path: '/person/goods_article',
+            component: GoodsArticle
           },
           {
             path: '/person/update_user_info',

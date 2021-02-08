@@ -16,7 +16,7 @@ async function addArticleInfo(params) {
 
 //删除文章信息
 async function deleteArticleInfo(params) {
-    let sql = `delete from f_article_info where id = '${params.articleInfoId}'`
+    let sql = `delete from f_article_info where info_id = '${params.articleInfoId}'`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -29,7 +29,7 @@ async function deleteArticleInfo(params) {
 
 //修改文章信息
 async function updateArticleInfo(params) {
-    let sql = `update f_article_info set type = '${params.type}',comment_info = '${params.commentInfo}',user_id = '${params.userId}',article_id = '${params.articleId}'`
+    let sql = `update f_article_info set type = '${params.type}',comment_info = '${params.commentInfo}',user_id = '${params.userId}',article_id = '${params.articleId}' where info_id = '${params.articleInfoId}'`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -42,7 +42,7 @@ async function updateArticleInfo(params) {
 
 //根据类型查询文章信息
 async function selectArticleInfoByType(params) {
-    let sql = `select i.*,a.*,u.name from f_article_info i,f_article a,f_user u where i.user_id = u.id and i.article_id = a.id and i.type = '${params.type}'`
+    let sql = `select i.*,a.*,u.name from f_article_info i,f_article a,f_user u where i.user_id = u.id and i.article_id = a.id and i.info_type = '${params.type}'`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -55,7 +55,20 @@ async function selectArticleInfoByType(params) {
 
 //根据id查询文章信息
 async function selectArticleInfoById(params) {
-    let sql = `select i.*,a.*,u.name from f_article_info i,f_article a,f_user u where i.user_id = u.id and i.article_id = a.id and i.id = '${params.articleInfoId}'`
+    let sql = `select i.*,a.*,u.name from f_article_info i,f_article a,f_user u where i.user_id = u.id and i.article_id = a.id and i.info_id = '${params.articleInfoId}'`
+    let data = await mysql.execute(sql)
+    return new Promise((resolve, reject) => {
+        if (data && data.errno) {
+            reject(data)
+        } else {
+            resolve(data)
+        }
+    })
+}
+
+//根据用户查询文章信息
+async function selectArticleInfoByUser(params) {
+    let sql = `select i.*,a.*,u.name from f_article_info i,f_article a,f_user u where i.user_id = u.id and i.article_id = a.id and i.user_id = '${params.userId}' order by i.ct desc`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -98,5 +111,6 @@ module.exports = {
     selectArticleInfoByType:selectArticleInfoByType,
     selectArticleInfoById:selectArticleInfoById,
     selectArticleInfoByArticleAndType:selectArticleInfoByArticleAndType,
-    selectArticleInfoByArticle:selectArticleInfoByArticle
+    selectArticleInfoByArticle:selectArticleInfoByArticle,
+    selectArticleInfoByUser:selectArticleInfoByUser
 }

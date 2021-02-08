@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :loading="articleLoading" class="my_article">
+    <div v-if="list.length" :loading="articleLoading" class="my_article">
       <el-card
         class="card"
         v-for="(item, index) in list"
@@ -9,23 +9,32 @@
       >
         <div
           @click="showDetail(item)"
-          :style="{ background: 'url('+item.imgurl+') no-repeat center center', backgroundSize: '100% 100%',width:'100%',height:'200px'}"
+          :style="{
+            background: 'url(' + item.img_url + ') no-repeat center center',
+            backgroundSize: '100% 100%',
+            width: '100%',
+            height: '200px',
+          }"
         >
           <div class="demo"></div>
         </div>
-        <div style="padding: 14px;">
-          <span class="title_art">{{item.title}}</span>
+        <div style="padding: 14px">
+          <span class="title_art">{{ item.title }}</span>
           <div class="bottom clearfix">
             <time class="time">
-              <span style="margin:5px 0">作者：{{ item.nickname }}</span>
+              <span style="margin: 5px 0">作者：{{ item.name }}</span>
               <br />
-              收藏时间：{{ item.createtime }}
+              收藏时间：{{ item.ct }}
               <br />
             </time>
             <br />
-            <div style="margin-top:5px">
-              <el-button type="info" @click="showDetail(item)" size="mini">查看</el-button>
-              <el-button type="danger" @click="deleteArticle(item)" size="mini">删除</el-button>
+            <div style="margin-top: 5px">
+              <el-button type="info" @click="showDetail(item)" size="mini"
+                >查看</el-button
+              >
+              <el-button type="danger" @click="deleteArticle(item)" size="mini"
+                >删除</el-button
+              >
             </div>
           </div>
         </div>
@@ -33,32 +42,29 @@
     </div>
 
     <el-pagination
-      style="margin:15px"
+      style="margin: 15px"
       background
       @size-change="handleSizeChange"
       @current-change="handleCurrentChange"
-      :current-page="PageConfig.page_no"
+      :current-page="PageConfig.page"
       :page-sizes="[8, 16, 32, 64]"
-      :page-size="PageConfig.page_size"
+      :page-size="PageConfig.limit"
       layout="total,sizes, prev, pager, next"
       :total="PageConfig.total"
       :hide-on-single-page="true"
+      v-if="list.length"
     ></el-pagination>
+    <div v-if="!list || !list.length" class="no_notice">
+      暂无收藏内容，更多精彩内容等您浏览
+    </div>
   </div>
 </template>
 
 <script>
 import {
-  ArticleAddGoods,
-  ArticleRemoveGoods,
-  ArticleGetGoodsStatus,
-  ArticleAddCollect,
-  ArticleRemoveCollect,
-  ArticleAddComments,
-  ArticleSelectComments,
-  SelectSecondComments,
-  AddSecondComments,
-  GetCounts
+  SelectArticleInfoById,
+  SelectArticleInfoByUser,
+  DeleteArticleInfo,
 } from "../../api/article_info_api";
 import { mapState, mapMutations, mapActions } from "vuex";
 import { PageConfig } from "../../utils/tools";
@@ -66,120 +72,145 @@ import {
   getFirstPic,
   dateTimeStamp,
   formatDateTime,
-  getVideoImg
+  getVideoImg,
 } from "../../utils/util";
 export default {
   name: "CollectArticle",
   data() {
     return {
       articlePageConfig: {
-        page_size: 8,
-        page_no: 1,
-        total: 0
+        limit: 8,
+        page: 1,
+        total: 0,
       },
-      PageConfig,
+      PageConfig: {
+        limit: 8,
+        page: 1,
+        total: 0,
+      },
       list: [],
-      articleLoading: false
+      articleLoading: false,
     };
   },
   created() {
-    this.ArticleGetCollectList({
+    this.GetCollectList({
       ...this.PageConfig,
-      userid: this.userid,
-      type: "1"
+      userId: this.userId,
+      type: "收藏",
     });
   },
   mounted() {
     this.formatArticleList();
   },
   methods: {
-    ...mapActions(["GetArticleListByUser", "ArticleGetCollectList"]),
+    ...mapActions(["GetArticleListByUser", "GetCollectList"]),
     deleteArticle(data) {
       this.$confirm("确定取消收藏吗？")
-        .then(res => {
-          ArticleRemoveCollect({ _id: data._id })
-            .then(res => {
+        .then((res) => {
+          DeleteArticleInfo({ articleInfoId: data.id })
+            .then((res) => {
               if (res && res.code == "200") {
                 this.$message.success("取消收藏成功");
-                this.ArticleGetCollectList({
+                this.GetCollectList({
                   ...this.PageConfig,
-                  userid: this.userid,
-                  type: "1"
+                  userId: this.userId,
+                  type: "收藏",
                 });
               } else {
                 this.$message.error("出现错误，请稍候再试");
               }
             })
-            .catch(err => {
-              
+            .catch((err) => {
               this.$message.error("出现错误，请稍候再试");
             });
         })
-        .catch(err => {
+        .catch((err) => {
           return;
         });
     },
     showDetail(data) {
       this.$router.push({
         path: "/article_detail",
-        query: { articleid: data.articleid }
+        query: { articleid: data.article_id },
       });
     },
-    formatArticleList() {
+    formatArticleList(noticeList) {
       this.articleLoading = true;
-      let list =
-        (this.articleCollectList && this.articleCollectList.data) || [];
-      this.PageConfig.total =
-        (this.articleCollectList && this.articleCollectList.total) || 0;
+      let list = [];
+      if (noticeList) {
+        list = noticeList;
+      } else {
+        list =
+          (this.collectList &&
+            this.collectList.data &&
+            this.collectList.data.length &&
+            this.collectList.data.slice(
+              (this.PageConfig.page - 1) * this.PageConfig.limit,
+              this.PageConfig.page * this.PageConfig.limit
+            )) ||
+          [];
+      }
+      this.PageConfig.total = (this.collectList && this.collectList.total) || 0;
       this.list = [];
-      list.map(i => {
-        i.imgurl =
-          getFirstPic(
-            (i.articleUser && i.articleUser[0] && i.articleUser[0].article) ||
-              ""
-          ) || "http://localhost:8888/public/images/noimage.jpg";
-        i.createtime = formatDateTime(dateTimeStamp(i.createtime));
-        i.nickname = (i.collectUser[0] && i.collectUser[0].nickname) || "";
+      list.map((i) => {
+        i.img_url =
+          i.img_url ||
+          getFirstPic(i.content || "") ||
+          "http://localhost:8888/public/images/noimage.jpg";
+        i.ct = formatDateTime(dateTimeStamp(i.ct));
         this.list.push(i);
       });
-      
+
       this.articleLoading = false;
     },
     handleSizeChange(val) {
       let PageConfig = {
-        page_size: val,
-        page_no: this.articlePageConfig.page_no - 1
+        limit: val,
+        page: this.articlePageConfig.page,
       };
-      this.ArticleGetCollectList({ ...PageConfig, userid: this.userid });
+      let temp = [...this.collectList.data]
+      let list = temp.slice(
+        PageConfig.limit * (PageConfig.page - 1),
+        PageConfig.limit * PageConfig.page
+      );
+      console.log(list);
+      this.formatArticleList(list);
     },
     handleCurrentChange(val) {
       let PageConfig = {
-        page_size: this.articlePageConfig.page_size,
-        page_no: val - 1
+        limit: this.articlePageConfig.limit,
+        page: val,
       };
-      this.ArticleGetCollectList({ ...PageConfig, userid: this.userid });
-    }
+      let temp = [...this.collectList.data]
+      let list = temp.slice(
+        PageConfig.limit * (PageConfig.page - 1),
+        PageConfig.limit * PageConfig.page
+      );
+      console.log(list);
+      this.formatArticleList(list);
+    },
   },
   watch: {
-    articleCollectList: {
+    collectList: {
       handler(newval, old) {
-        
-        this.formatArticleList();
+        if (old && !old.length) {
+          this.formatArticleList();
+        }
       },
-      deep: true
-    }
+      deep: true,
+    },
   },
   computed: {
     ...mapState({
-      isLogin: state => state.isLogin,
-      userid: state => state.userid,
-      userInfo: state => state.userInfo,
-      danceSortList: state => state.danceSortList,
-      articleList: state => state.articleList,
-      newVideoList: state => state.newVideoList,
-      articleCollectList: state => state.articleCollectList
-    })
-  }
+      isLogin: (state) => state.isLogin,
+      userId: (state) => state.userId,
+      userInfo: (state) => state.userInfo,
+      danceSortList: (state) => state.danceSortList,
+      articleList: (state) => state.articleList,
+      newVideoList: (state) => state.newVideoList,
+      collectList: (state) => state.collectList,
+    }),
+  },
 };
 </script>
 <style scoped>
@@ -254,5 +285,18 @@ export default {
   /* justify-content: space-around; */
   flex-direction: row;
   flex-wrap: wrap;
+}
+.no_notice {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 0;
+}
+@media (max-width: 768px) {
+  .card {
+    margin: 10px;
+    width: 44%;
+  }
 }
 </style>

@@ -7,7 +7,7 @@
             <div class="user_img_box">
               <img
                 :src="
-                  (userData && userData.imgurl) ||
+                  (userData && userData.img_url) ||
                   'http://localhost:8888/public/images/user1.jpg'
                 "
                 class="user_img"
@@ -66,27 +66,41 @@
             <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
             <el-breadcrumb-item>个人中心</el-breadcrumb-item>
           </el-breadcrumb>
-          <i class="el-icon-setting" @click="isCollapse = !isCollapse" style="margin-bottom: 20px"></i>
-          <el-menu :collapse="isCollapse" @select="handleSel" active-text-color="#ffd04b">
+          <i
+            class="el-icon-setting"
+            @click="isCollapse = !isCollapse"
+            style="margin-bottom: 20px"
+          ></i>
+          <el-menu
+            :collapse="isCollapse"
+            @select="handleSel"
+            active-text-color="#ffd04b"
+          >
             <el-submenu index="1">
               <template slot="title">
                 <i class="el-icon-document"></i>
-                <span>我的文章</span>
+                <span>我的发布</span>
               </template>
               <router-link to="/person/add_article">
-                <el-menu-item index="1-1">发布文章</el-menu-item>
+                <el-menu-item index="1-1">发布内容</el-menu-item>
               </router-link>
               <router-link to="/person/my_article">
                 <el-menu-item index="1-2">我的文章</el-menu-item>
+              </router-link>
+              <router-link to="/person/my_video">
+                <el-menu-item index="1-3">我的视频</el-menu-item>
               </router-link>
             </el-submenu>
             <el-submenu index="3">
               <template slot="title">
                 <i class="el-icon-star-off"></i>
-                <span>我的收藏</span>
+                <span>我的关注</span>
               </template>
               <router-link to="/person/collect_article">
-                <el-menu-item index="3-1">收藏文章</el-menu-item>
+                <el-menu-item index="3-1">我的收藏</el-menu-item>
+              </router-link>
+              <router-link to="/person/goods_article">
+                <el-menu-item index="3-2">我的点赞</el-menu-item>
               </router-link>
             </el-submenu>
             <el-submenu index="6">
@@ -113,13 +127,13 @@
 import { mapState, mapMutations, mapActions } from "vuex";
 import { UpdateUserInfo } from "../api/user_api";
 import { permissionMap } from "../utils/tools";
-import { formatDateTime,isMobile } from "../utils/util";
+import { formatDateTime, isMobile } from "../utils/util";
 // import { DeleteMessage } from "../api/message_api";
 export default {
   name: "UserPerson",
   data() {
     return {
-      isPhone:false,
+      isPhone: false,
       isCollapse: false,
       dialoading: false,
       dialogVisible: false,
@@ -149,7 +163,7 @@ export default {
   mounted() {
     this.userData = this.userInfo;
     this.$router.push("/person");
-    this.isCollapse = isMobile()
+    this.isCollapse = isMobile();
   },
   methods: {
     ...mapMutations([
@@ -195,7 +209,7 @@ export default {
           return;
         });
     },
-    handleSel(){
+    handleSel() {
       // this.isCollapse = true
     },
     verifyUser() {

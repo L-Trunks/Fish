@@ -1,6 +1,6 @@
 import { get, post } from './http'
 
-const url = '/api/articleInfo'
+const url = '/api/article_info'
 /**
  * 添加文章信息(添加点赞、评论、收藏信息)
  */
@@ -34,6 +34,13 @@ export const SelectArticleInfoByType = (params) => {
  */
 export const SelectArticleInfoById = (params) => {
     return get(url + '/select_article_info_by_id', params)
+}
+
+/**
+ * 根据用户查询文章信息
+ */
+export const SelectArticleInfoByUser = (params) => {
+    return get(url + '/select_article_info_by_user', params)
 }
 
 /**

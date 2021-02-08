@@ -49,8 +49,13 @@ const mutations = {
     
     changeKeyword(state, params) {
         state.keyword = params;
+    },
+    changeUserArticleList(state, params) {
+        state.userArticleList = params;
+    },
+    changeCollectList(state, params) {
+        state.collectList = params;
     }
-
 }
 
 export default mutations

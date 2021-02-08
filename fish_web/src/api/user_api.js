@@ -33,7 +33,7 @@ export const SelectAllUser = (params) => {
  * 根据id获取用户信息
  */
 export const SelectUserById = (params) => {
-    return get(url+'/select_user_by_id', params)
+    return post(url+'/select_user_by_id', params)
 }
 
 /**

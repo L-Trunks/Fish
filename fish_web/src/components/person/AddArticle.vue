@@ -87,6 +87,9 @@
             @click="addSubmit('editForm')"
             >提交</el-button
           >
+          <el-button type="primary" @click="handleShow"
+            >预览</el-button
+          >
         </div>
       </el-form-item>
     </el-form>
@@ -179,6 +182,117 @@ export default {
     },
     showContent(val) {
       this.editForm.content = setImgSize(val, 600, 350);
+    },
+    handleShow() {
+      this.dialoading = true;
+      this.showType = this.editForm.type || "文章";
+      if (this.editForm.type == "文章") {
+        this.showIntroduce = (this.editForm && this.editForm.content) || "";
+        this.dialoading = false;
+      } else if (this.editForm.type == "视频") {
+        this.dialogVisible = true;
+        setTimeout(() => {
+          this.dialoading = false;
+          if (this.videoPlay) {
+            this.videoPlay.dispose();
+          }
+          let player = new Aliplayer(
+            {
+              id: "player-con",
+              width: "100%",
+              height: "500px",
+              autoplay: false,
+              isLive: false,
+              rePlay: false,
+              playsinline: true,
+              preload: true,
+              controlBarVisibility: "hover",
+              showBarTime: 5000,
+              source: this.editForm.content || "",
+              cover: this.editForm.img_url,
+              useH5Prism: true,
+              skinLayout: [
+                {
+                  name: "bigPlayButton",
+                  align: "blabs",
+                  x: 30,
+                  y: 80,
+                },
+                {
+                  name: "H5Loading",
+                  align: "cc",
+                },
+                {
+                  name: "errorDisplay",
+                  align: "tlabs",
+                  x: 0,
+                  y: 0,
+                },
+                {
+                  name: "infoDisplay",
+                },
+                {
+                  name: "tooltip",
+                  align: "blabs",
+                  x: 0,
+                  y: 56,
+                },
+                {
+                  name: "thumbnail",
+                },
+                {
+                  name: "controlBar",
+                  align: "blabs",
+                  x: 0,
+                  y: 0,
+                  children: [
+                    {
+                      name: "progress",
+                      align: "blabs",
+                      x: 0,
+                      y: 44,
+                    },
+                    {
+                      name: "playButton",
+                      align: "tl",
+                      x: 15,
+                      y: 12,
+                    },
+                    {
+                      name: "timeDisplay",
+                      align: "tl",
+                      x: 10,
+                      y: 7,
+                    },
+                    {
+                      name: "fullScreenButton",
+                      align: "tr",
+                      x: 10,
+                      y: 12,
+                    },
+                    {
+                      name: "setting",
+                      align: "tr",
+                      x: 15,
+                      y: 12,
+                    },
+                    {
+                      name: "volume",
+                      align: "tr",
+                      x: 5,
+                      y: 10,
+                    },
+                  ],
+                },
+              ],
+            },
+            function (player) {}
+          );
+          this.videoPlay = player;
+        }, 100);
+      }
+
+      this.dialogVisible = true;
     },
     addSubmit(formname) {
       this.$refs[formname].validate((valid) => {

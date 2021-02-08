@@ -1,9 +1,13 @@
 <template>
-  <div :loading="loading" style="padding:20px">
+  <div :loading="loading" style="padding: 20px">
     <div class="user_img">
       <img
         class="image"
-        :src="userForm &&userForm.imgurl||'http://localhost:8888/public/images/user1.jpg'"
+        :src="
+          (userForm && userForm.img_url) ||
+          userForm.img_url ||
+          'http://localhost:8888/public/images/user1.jpg'
+        "
         alt
       />
       <el-upload
@@ -17,58 +21,73 @@
         :file-list="fileList"
       >
         <el-button
-          :style="disabled?'display:none':'display:block'"
+          :style="disabled ? 'display:none' : 'display:block'"
           size="small"
           :disabled="disabled"
           type="primary"
-        >点击上传</el-button>
-        <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
+          >点击上传</el-button
+        >
+        <div slot="tip" class="el-upload__tip">
+          只能上传jpg/png文件，且不超过500kb
+        </div>
       </el-upload>
     </div>
     <div class="user_info">
-      <el-form :label-position="'left'" ref="userForm" v-model="userForm" label-width="80px">
-        <el-form-item label="昵称:" prop="nickname">
-          <el-input v-model="userForm.nickname" :disabled="disabled"></el-input>
+      <el-form
+        :label-position="'left'"
+        ref="userForm"
+        v-model="userForm"
+        label-width="80px"
+      >
+        <el-form-item label="昵称:" prop="name">
+          <el-input v-model="userForm.name" :disabled="disabled"></el-input>
         </el-form-item>
-        <el-form-item label="邮箱:">
+        <!-- <el-form-item label="邮箱:">
           <el-input v-model="userForm.mail" :disabled="disabled"></el-input>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="个人简介:">
-          <el-input v-model="userForm.introduce" type="textarea" :disabled="disabled"></el-input>
+          <el-input
+            v-model="userForm.introduce"
+            type="textarea"
+            :disabled="disabled"
+          ></el-input>
         </el-form-item>
       </el-form>
     </div>
     <div class="user_btn">
-      <el-button v-if="disabled" @click="disabled=false" type="primary">编辑</el-button>
+      <el-button v-if="disabled" @click="disabled = false" type="primary"
+        >编辑</el-button
+      >
       <el-button v-if="!disabled" @click="submit" type="danger">提交</el-button>
-      <el-button v-if="!disabled" @click="disabled=false" type="primary">取消</el-button>
+      <el-button v-if="!disabled" @click="disabled = false" type="primary"
+        >取消</el-button
+      >
     </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
-import { UpdateUserInfo, VerifyNickName } from "../../api/user_api";
+import { UpdateUserById, SelectUserById } from "../../api/user_api";
 export default {
   name: "UpdateUserInfo",
   data() {
     return {
       uploadUrl: "/api/upload/image",
       userForm: {
-        imgurl: "",
-        nickname: "",
+        img_url: "",
+        name: "",
         mail: "",
-        introduce: ""
+        introduce: "",
       },
       disabled: true,
       fileList: [],
-      loading: false
+      loading: false,
     };
   },
   created() {},
   mounted() {
     this.userInfo ? (this.userForm = this.userInfo) : "";
-    
   },
   methods: {
     ...mapActions(["GetUserInfoById"]),
@@ -78,53 +97,36 @@ export default {
       "changeToken",
       "changeIsLogin",
       "changeUserId",
-      "changeUserInfo"
+      "changeUserInfo",
     ]),
     submit() {
       this.loading = true;
-      if (this.userForm && this.userForm.nickname == 0) {
+      if (this.userForm && this.userForm.name == 0) {
         this.loading = false;
         this.$message.error("请填写昵称");
         return;
       }
-      VerifyNickName({ nickname: this.userForm.nickname })
-        .then(res => {
-          
-          if (
-            res &&
-            res.code === "1008" &&
-            res.data[0].nickname !== this.userInfo.nickname
-          ) {
+      UpdateUserById({
+        ...this.userForm,
+        ...this.userInfo,
+        userName: this.userInfo.user_name,
+        userId: this.userId,
+      })
+        .then((res) => {
+          if (res && res.code == "200") {
             this.loading = false;
-            this.$message.error("昵称已被使用");
-            return;
+            this.fileList = [];
+            this.GetUserInfoById({ userId: this.userId });
+            this.$message.success("修改成功");
+            this.disabled = true;
           } else {
-            UpdateUserInfo({ ...this.userForm, _id: this.userid })
-              .then(res => {
-                
-                if (res && res.code == "200") {
-                  this.loading = false;
-                  this.fileList = [];
-                  this.GetUserInfoById({ _id: this.userid });
-                  this.$message.success("修改成功");
-                  this.disabled = true;
-                  
-                } else {
-                  this.loading = false;
-                  this.$message.error("出现错误，请稍候重试");
-                }
-              })
-              .catch(err => {
-                
-                this.loading = false;
-                this.$message.error("出现错误，请稍候重试");
-              });
+            this.loading = false;
+            this.$message.error("出现错误，请稍候重试");
           }
         })
-        .catch(err => {
+        .catch((err) => {
           this.loading = false;
-          
-          this.$message.error("昵称验证失败，请稍候重试");
+          this.$message.error("出现错误，请稍候重试");
         });
     },
     beforeUpload() {
@@ -132,36 +134,34 @@ export default {
     },
     handleRemove(file, fileList) {
       this.loading = true;
-      
-      this.userForm.imgurl =
-        this.userInfo.imgurl || "http://localhost:8888/public/images/user1.jpg";
+
+      this.userForm.img_url =
+        this.userInfo.img_url || "http://localhost:8888/public/images/user1.jpg";
       this.loading = false;
     },
     handleSuccess(file) {
-      
-      this.userForm.imgurl = file.data.url;
+      this.userForm.img_url = file.data.url;
       this.loading = false;
     },
     handleExceed() {
       this.$message.error("只允许上传一张图片,请删除后再上传");
-    }
+    },
   },
   computed: {
     ...mapState({
-      isLogin: state => state.isLogin,
-      userid: state => state.userid,
-      userInfo: state => state.userInfo
-    })
+      isLogin: (state) => state.isLogin,
+      userId: (state) => state.userId,
+      userInfo: (state) => state.userInfo,
+    }),
   },
   watch: {
     userInfo: {
       handler(newval, old) {
-        
         this.userForm = newval;
       },
-      deep: true
-    }
-  }
+      deep: true,
+    },
+  },
 };
 </script>
 <style scoped>
