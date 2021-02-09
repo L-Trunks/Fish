@@ -104,6 +104,16 @@ export default {
     };
   },
   created() {
+    let page = {
+      limit: 8,
+      page: 1,
+      total: 0,
+    };
+    this.SelectNewArticle({ ...page, type: "文章" });
+    this.SelectNewVideo({ ...page, type: "视频" });
+    this.SelectRotationImg({ ...page, type: "轮播" });
+    this.SelectAllCategory({ ...page, limit:999999 });
+    this.SelectAnnouncement({ ...page, type: '公告' });
     let accessToken = localStorage.getItem("accessToken") || "";
     if (accessToken) {
       this.changeToken(accessToken);
@@ -122,8 +132,8 @@ export default {
         .catch((err) => {
           this.$router.push("/login");
           this.changeIsLogin(false);
-            this.changeUserId('');
-            this.changeUserInfo({});
+          this.changeUserId("");
+          this.changeUserInfo({});
           this.$message.error("token失效，请重新登录");
         });
     }
@@ -137,7 +147,13 @@ export default {
       "changeUserInfo",
       "changeKeyword",
     ]),
-    ...mapActions([]),
+    ...mapActions([
+      "SelectAllCategory",
+      "SelectNewArticle",
+      "SelectNewVideo",
+      "SelectRotationImg",
+      "SelectAnnouncement"
+    ]),
     getSearch() {
       this.changeKeyword(this.searchWord);
       this.$router.push({

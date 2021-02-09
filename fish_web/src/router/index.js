@@ -9,6 +9,10 @@ import Management from '../components/Management.vue';
 
 import ArticleDetail from '../components/ArticleDetail.vue';
 import VideoDetail from '../components/VideoDetail.vue';
+import ActivityDetail from '../components/ActivityDetail.vue';
+import ActivityList from '../components/ActivityList.vue';
+import ListByCategory from '../components/ListByCategory.vue';
+import SearchResult from '../components/SearchResult.vue';
 
 import AddArticle from '../components/person/AddArticle.vue';
 import MyArticle from '../components/person/MyArticle.vue';
@@ -94,6 +98,22 @@ const routes = [
         path: '/video_detail',
         component: VideoDetail
       },
+      {
+        path: '/rotation_img_detail',
+        component: ActivityDetail
+      },
+      {
+        path: '/list_by_category',
+        component: ListByCategory
+      },
+      {
+        path: '/activity_list',
+        component: ActivityList
+      },
+      {
+        path: '/search',
+        component: SearchResult
+      }
     ]
   },
   {

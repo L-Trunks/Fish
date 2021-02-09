@@ -1,7 +1,8 @@
 <template>
   <div>
     <el-row class>
-      <el-col style="background: #fff" class="video" :span="12" :offset="4">
+      <el-col style="background: #fff" class="video" :md="{ span: 12, offset: 4 }"
+        :xs="24">
         <el-breadcrumb
           style="margin-top: 20px; margin-left: 10px"
           separator-class="el-icon-arrow-right"
@@ -150,7 +151,7 @@
           </el-tab-pane>
         </el-tabs>
       </el-col>
-      <el-col class :span="4">
+      <el-col class :md="4" :xs="24">
         <div class="new_video">
           <el-card shadow="never" class="box-card">
             <div slot="header" class="clearfix">
@@ -158,7 +159,7 @@
             </div>
             <el-card
               class="card"
-              v-for="(item, index) in articleList.slice(0, 4)"
+              v-for="(item, index) in articleList.slice(0, 6)"
               :key="index"
               @click.native="showDetail(item)"
               :body-style="{ padding: '0px' }"
@@ -604,24 +605,26 @@ export default {
     },
     showDetail(data) {
       this.$router.push({
-        path: "/article_detail",
-        query: { articleid: data.id },
+        path: "/video_detail",
+        query: { videoid: data.id },
       });
+      window.location.reload()
     },
     //格式化推荐文章
     formatArticleList() {
-      let list = (this.newArticleList && this.newArticleList.data) || [];
+      let list = (this.newVideoList && this.newVideoList.data) || [];
       this.articleList = [];
       list.map((i) => {
-        i.imgurl =
-          getFirstPic(i.article) ||
+        i.img_url = i.img_url||
+          getFirstPic(i.content) ||
           "http://localhost:8888/public/images/noimage.jpg";
         i.ct = formatDateTime(dateTimeStamp(i.ct));
-        i.nickname = (i.articleUser[0] && i.articleUser[0].nickname) || "";
-        i.sortname = i.articleSort[0].sortname || "";
+        i.name = (i.name) || "";
+        i.category_name = i.category_name || "";
         this.articleList.push(i);
       });
     },
+  
   },
   components: {
     "ali-player": VueAliplayer,
@@ -634,6 +637,7 @@ export default {
       userInfo: (state) => state.userInfo,
       danceSortList: (state) => state.danceSortList,
       newArticleList: (state) => state.newArticleList,
+      newVideoList: (state) => state.newVideoList,
       messageList: (state) => state.messageList,
       videoResult: (state) => state.videoResult,
       rotationImgList: (state) => state.rotationImgList,

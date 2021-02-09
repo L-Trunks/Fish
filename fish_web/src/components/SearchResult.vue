@@ -1,57 +1,41 @@
 <template>
   <div class>
     <el-row class>
-      <el-col :loading="loading" class :span="16" :offset="4">
-        <el-breadcrumb style="margin:20px 0;margin-left:10px" separator-class="el-icon-arrow-right">
+      <el-col :loading="loading" class :md="{ span: 16, offset: 4 }"
+        :xs="24">
+        <el-breadcrumb
+          style="margin: 20px 0; margin-left: 10px"
+          separator-class="el-icon-arrow-right"
+        >
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-          <el-breadcrumb-item>搜索结果</el-breadcrumb-item>
+          <el-breadcrumb-item>搜索</el-breadcrumb-item>
         </el-breadcrumb>
         <el-tabs type="border-card">
           <el-tab-pane>
-            <span slot="label">
-              <i class="el-icon-date"></i> 资讯&文章结果
+            <span slot="label">搜索结果
+              <i class="el-icon-date"></i>
             </span>
             <content-list
               :loading="articleLoading"
-              style="margin-top:35px"
+              style="margin-top: 35px"
               :type="'article'"
               :title="articleTitle"
               :list="articleList"
             ></content-list>
+            <el-col
+        :xs="24">
             <el-pagination
-              style="margin:15px"
+              style="margin: 15px"
               background
               @size-change="handleSizeChange"
               @current-change="handleCurrentChange"
-              :current-page="ArticlePageConfig.page_no"
+              :current-page="ArticlePageConfig.page"
               :page-sizes="[8, 16, 32, 64]"
-              :page-size="ArticlePageConfig.page_size"
+              :page-size="ArticlePageConfig.limit"
               layout="total,sizes, prev, pager, next"
               :total="ArticlePageConfig.total"
             ></el-pagination>
-          </el-tab-pane>
-          <el-tab-pane>
-            <span slot="label">
-              <i class="el-icon-s-home"></i> 视频结果
-            </span>
-            <content-list
-              :loading="videoLoading"
-              style="margin-top:50px"
-              :type="'video'"
-              :title="videoTitle"
-              :list="videoList"
-            ></content-list>
-            <el-pagination
-              style="margin:15px"
-              background
-              @size-change="handleVideoSizeChange"
-              @current-change="handleVideoCurrentChange"
-              :current-page="VideoPageConfig.page_no"
-              :page-sizes="[8, 16, 32, 64]"
-              :page-size="VideoPageConfig.page_size"
-              layout="total,sizes, prev, pager, next"
-              :total="VideoPageConfig.total"
-            ></el-pagination>
+            </el-col>
           </el-tab-pane>
         </el-tabs>
       </el-col>
@@ -62,12 +46,12 @@
 <script>
 import { mapState, mapMutations, mapActions } from "vuex";
 import ContentList from "../components/ContentList";
-import { GetVideoResultList, GetArticleResultList } from "../api/search_api";
+import { SelectArticleByLike } from "../api/article_api";
 import {
   getFirstPic,
   dateTimeStamp,
   formatDateTime,
-  getVideoImg
+  getVideoImg,
 } from "../utils/util";
 import { PageConfig } from "../utils/tools";
 export default {
@@ -87,17 +71,16 @@ export default {
       imgList: [],
       isHidden: true,
       ArticlePageConfig: {
-        page_size: 8,
-        page_no: 1,
-        total: 0
+        limit: 16,
+        page: 1,
+        total: 0,
       },
-      PageConfig,
+      PageConfig: {
+        limit: 16,
+        page: 1,
+        total: 0,
+      },
       searchWord: "",
-      VideoPageConfig: {
-        page_size: 8,
-        page_no: 1,
-        total: 0
-      }
     };
   },
   created() {
@@ -106,7 +89,6 @@ export default {
   mounted() {
     this.getSearch();
     this.formatArticleList();
-    this.formatVideoList();
   },
 
   methods: {
@@ -115,7 +97,7 @@ export default {
       "GetAllDanceSortList",
       "GetAllArticleList",
       "GetAllVideoList",
-      "GetAllRotationImgList"
+      "GetAllRotationImgList",
     ]),
     getSearch() {
       this.loading = true;
@@ -125,170 +107,104 @@ export default {
         this.$message.error("请输入要搜索的内容");
         return;
       } else {
-        GetVideoResultList({ keyword: this.searchWord, ...PageConfig })
-          .then(res => {
-            
-            this.changeVideoResult(res.data || []);
-            this.loading = false;
-          })
-          .catch(err => {
-            
-          });
-        GetArticleResultList({ keyword: this.searchWord, ...PageConfig })
-          .then(res => {
+        SelectArticleByLike({ keyword: this.searchWord, ...this.PageConfig })
+          .then((res) => {
             this.changeArticleResult(res.data || []);
             this.loading = false;
-            
           })
-          .catch(err => {
-            
-          });
+          .catch((err) => {});
       }
-      this.$router.push("/search");
+      // this.$router.push("/search");
     },
     //格式化文章列表
     formatArticleList() {
       this.articleLoading = true;
-      let list = (this.articleResult && this.articleResult.data) || [];
+      let list =
+        (this.articleResult &&
+          this.articleResult[0]) ||
+        [];
       this.ArticlePageConfig.total =
-        (this.articleResult && this.articleResult.total) || 0;
+        (this.articleResult &&
+          this.articleResult[1] &&
+          this.articleResult[1][0].total) ||
+        0;
       this.articleList = [];
-      list.map(i => {
+      list.map((i) => {
         i.imgurl =
-          getFirstPic((i.article && i.article) || "") ||
+          i.img_url ||
+          getFirstPic((i.content && i.content) || "") ||
           "http://localhost:8888/public/images/noimage.jpg";
-        i.createtime = formatDateTime(dateTimeStamp(i.createtime));
+        i.ct = formatDateTime(dateTimeStamp(i.ct));
         this.articleList.push(i);
       });
-      
+
       this.articleLoading = false;
-    },
-    //格式化视频列表
-    formatVideoList() {
-      this.videoLoading = true;
-      
-      let list = (this.videoResult && this.videoResult.data) || [];
-      this.VideoPageConfig.total =
-        (this.videoResult && this.videoResult.total) || 0;
-      this.videoList = [];
-      list.map(i => {
-        i.imgurl = i.firsturl || "";
-        i.title = i.videotitle || "";
-        i.createtime = formatDateTime(dateTimeStamp(i.createtime));
-        this.videoList.push(i);
-      });
-      this.videoLoading = true;
     },
     handleSizeChange(val) {
       let PageConfig = {
-        page_size: val,
-        page_no: this.ArticlePageConfig.page_no - 1
+        limit: val,
+        page: this.ArticlePageConfig.page - 1,
       };
 
       GetArticleResultList({ keyword: this.searchWord, ...PageConfig })
-        .then(res => {
+        .then((res) => {
           this.changeArticleResult(res.data || []);
           this.formatArticleList();
-          
         })
-        .catch(err => {
-          
-        });
+        .catch((err) => {});
     },
     handleCurrentChange(val) {
       let PageConfig = {
-        page_size: this.ArticlePageConfig.page_size,
-        page_no: val - 1
+        limit: this.ArticlePageConfig.limit,
+        page: val - 1,
       };
       GetArticleResultList({ keyword: this.searchWord, ...PageConfig })
-        .then(res => {
+        .then((res) => {
           this.changeArticleResult(res.data || []);
-          
+
           this.formatArticleList();
         })
-        .catch(err => {
-          
-        });
+        .catch((err) => {});
     },
-    handleVideoSizeChange(val) {
-      let PageConfig = {
-        page_size: val,
-        page_no: this.VideoPageConfig.page_no - 1
-      };
-      GetVideoResultList({ keyword: this.searchWord, ...PageConfig })
-        .then(res => {
-          
-          this.changeVideoResult(res.data || []);
-          this, formatVideoList();
-        })
-        .catch(err => {
-          
-        });
-    },
-    handleVideoCurrentChange(val) {
-      let PageConfig = {
-        page_size: this.VideoPageConfig.page_size,
-        page_no: val - 1
-      };
-      GetVideoResultList({ keyword: this.searchWord, ...PageConfig })
-        .then(res => {
-          
-          this.changeVideoResult(res.data || []);
-          this, formatVideoList();
-        })
-        .catch(err => {
-          
-        });
-    }
   },
   components: { ContentList },
   computed: {
     ...mapState({
-      isLogin: state => state.isLogin,
-      userid: state => state.userid,
-      userInfo: state => state.userInfo,
-      danceSortList: state => state.danceSortList,
-      newArticleList: state => state.newArticleList,
-      newVideoList: state => state.newVideoList,
-      messageList: state => state.messageList,
-      videoResult: state => state.videoResult,
-      articleResult: state => state.articleResult,
-      rotationImgList: state => state.rotationImgList,
-      announcementList: state => state.announcementList,
-      matchList: state => state.matchList,
-      keyword: state => state.keyword
-    })
+      isLogin: (state) => state.isLogin,
+      userid: (state) => state.userid,
+      userInfo: (state) => state.userInfo,
+      danceSortList: (state) => state.danceSortList,
+      newArticleList: (state) => state.newArticleList,
+      newVideoList: (state) => state.newVideoList,
+      messageList: (state) => state.messageList,
+      videoResult: (state) => state.videoResult,
+      articleResult: (state) => state.articleResult,
+      rotationImgList: (state) => state.rotationImgList,
+      announcementList: (state) => state.announcementList,
+      matchList: (state) => state.matchList,
+      keyword: (state) => state.keyword,
+    }),
   },
   watch: {
     keyword: {
       handler(newval, old) {
-        
         this.searchWord = newval;
       },
-      deep: true
+      deep: true,
     },
     searchWord: {
       handler(newval, old) {
-        
         this.getSearch();
       },
-      deep: true
+      deep: true,
     },
     articleResult: {
       handler(newval, old) {
-        
         this.formatArticleList();
       },
-      deep: true
+      deep: true,
     },
-    videoResult: {
-      handler(newval, old) {
-        
-        this.formatVideoList();
-      },
-      deep: true
-    }
-  }
+  },
 };
 </script>
 <style scoped>
@@ -394,5 +310,11 @@ export default {
   align-items: center;
   color: #fff;
   background: rgba(0, 0, 0, 0.3);
+}
+@media (max-width: 768px) {
+  .card {
+    margin: 10px;
+    width: 43%;
+  }
 }
 </style>

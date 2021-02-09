@@ -13,7 +13,8 @@ Vue.prototype.$md5 = md5;
 Vue.config.productionTip = false
 
 
-const whiteList = ['/', '/login', '/register']// 免登录白名单
+const whiteList = ['/', '/login', '/register','/article_detail', '/video_detail',
+  '/rotation_img_detail', '/list_by_category', '/activity_list', '/search']// 免登录白名单
 
 router.beforeEach((to, from, next) => {
   console.log(store.state)

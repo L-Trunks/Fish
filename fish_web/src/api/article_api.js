@@ -29,6 +29,13 @@ export const SelectAllArticleByType = (params) => {
 }
 
 /**
+ * 根据分类获取视频
+ */
+export const SelectAllVideoByType = (params) => {
+    return get(url+'/select_all_video_by_type',params)
+}
+
+/**
  * 搜索
  */
 export const SelectArticleByLike = (params) => {

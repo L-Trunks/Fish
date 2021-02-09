@@ -139,7 +139,7 @@
             </div>
             <el-card
               class="card"
-              v-for="(item, index) in articleList.slice(0, 4)"
+              v-for="(item, index) in articleList.slice(0, 6)"
               :key="index"
               @click.native="showDetail(item)"
               :body-style="{ padding: '0px' }"
@@ -588,18 +588,19 @@ export default {
         path: "/article_detail",
         query: { articleid: data.id },
       });
+      window.location.reload()
     },
     //格式化推荐文章
     formatArticleList() {
       let list = (this.newArticleList && this.newArticleList.data) || [];
       this.articleList = [];
       list.map((i) => {
-        i.imgurl =
-          getFirstPic(i.article) ||
+        i.img_url = i.img_url||
+          getFirstPic(i.content) ||
           "http://localhost:8888/public/images/noimage.jpg";
         i.ct = formatDateTime(dateTimeStamp(i.ct));
-        i.nickname = (i.articleUser[0] && i.articleUser[0].nickname) || "";
-        i.sortname = i.articleSort[0].sortname || "";
+        i.name = (i.name) || "";
+        i.category_name = i.category_name || "";
         this.articleList.push(i);
       });
     },

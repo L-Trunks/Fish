@@ -4,6 +4,7 @@ const state = {
     categoryList:null,
     hotArticleList:null,
     newArticleList:null,
+    newVideoList:null,
     articleList:[],
     userArticleList:[],
     collectList:[],

@@ -1,71 +1,58 @@
 <template>
   <div>
     <el-row class>
-      <el-col style="background:#fff" class="article" :span="12" :offset="4">
+      <el-col
+        style="background: #fff"
+        class="article"
+        :md="{ span: 12, offset: 4 }"
+        :xs="24"
+      >
         <el-breadcrumb
-          style="margin-top:20px;margin-left:10px"
+          style="margin-top: 20px; margin-left: 10px"
           separator-class="el-icon-arrow-right"
         >
           <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
-          <el-breadcrumb-item :to="{ path: '/' }">活动列表</el-breadcrumb-item>
-          <el-breadcrumb-item>活动详情</el-breadcrumb-item>
+          <el-breadcrumb-item :to="{ path: '/' }">轮播&公告</el-breadcrumb-item>
+          <el-breadcrumb-item>内容详情</el-breadcrumb-item>
         </el-breadcrumb>
         <div class="article_header">
-          <h1>{{articleInfo.title}}</h1>
+          <h1>{{ articleInfo.title }}</h1>
           <div class="article_info_user">
             <div>
               <i class="el-icon-user-solid"></i>
-              作者:{{articleInfo.activityUser && articleInfo.activityUser[0].nickname ||''}}
-              <i
-                class="el-icon-timer"
-              ></i>
-              发布时间:{{articleInfo.createtime}}
+              作者:{{ articleInfo.name || "" }}
+              <i class="el-icon-timer"></i>
+              发布时间:{{ articleInfo.ct }}
             </div>
             <div>
+              <i class="el-icon-chat-dot-square"></i>
+              评论数:{{ counts.comments_count || 0 }}
               <i class="el-icon-view"></i>
-              浏览量:{{articleInfo.lookscount}}
+              浏览量:{{ counts.looks_count || 0 }}
+              <i class="el-icon-thumb"></i>
+              点赞数:{{ counts.goods_count || 0 }}
             </div>
           </div>
         </div>
-        <div class="article_info">
-          <h2>活动海报</h2>
-          <img width="650px" height="800px" :src="articleInfo.imgurl" alt="暂无图片" />
+        <div class="article_player">
+          <div v-html="articleInfo.content"></div>
         </div>
         <div class="article_bottom">
           <div>
-            <i class="el-icon-collection-tag" style="font-size:26px"></i>
-            <el-tooltip class="item" effect="dark" content="活动＆比赛" placement="right-start">
-              <span @click="goListBySort">活动&比赛</span>
+            <i class="el-icon-collection-tag" style="font-size: 26px"></i>
+            <el-tooltip
+              class="item"
+              effect="dark"
+              content="标签"
+              placement="right-start"
+            >
+              <el-tag type="success">公告&轮播</el-tag>
+    
             </el-tooltip>
           </div>
         </div>
-        <el-tabs type="border-card">
-          <el-tab-pane>
-            <span slot="label">
-              <i class="el-icon-date"></i> 活动信息
-            </span>
-            <div class="video_info">
-              <div v-html="articleInfo.article"></div>
-            </div>
-          </el-tab-pane>
-          <el-tab-pane>
-            <span slot="label">
-              <i class="el-icon-s-home"></i> 活动地址
-            </span>
-            <div style="padding:20px">{{articleInfo.address}}</div>
-            <div style="text-align:right">
-              <a
-                :href="addressUrl+articleInfo.address"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <el-button type="danger" size="small">查看地址详情</el-button>
-              </a>
-            </div>
-          </el-tab-pane>
-        </el-tabs>
       </el-col>
-      <el-col class :span="4">
+      <el-col class :md="4" :xs="24">
         <div class="new_article">
           <el-card shadow="never" class="box-card">
             <div slot="header" class="clearfix">
@@ -73,24 +60,29 @@
             </div>
             <el-card
               class="card"
-              v-for="(item, index) in articleList"
+              v-for="(item, index) in articleList.slice(0, 4)"
               :key="index"
-              v-if="index<4"
               @click.native="showDetail(item)"
               :body-style="{ padding: '0px' }"
             >
               <div
-                :style="{ background: 'url('+item.imgurl+') no-repeat center center', backgroundSize: '100% 100%',width:'100%',height:'200px'}"
+                :style="{
+                  background:
+                    'url(' + item.img_url + ') no-repeat center center',
+                  backgroundSize: '100% 100%',
+                  width: '100%',
+                  height: '200px',
+                }"
               >
                 <div class="demo"></div>
               </div>
-              <div style="padding: 14px;">
-                <span class="title_art">{{item.title}}</span>
+              <div style="padding: 14px">
+                <span class="title_art">{{ item.title }}</span>
                 <div class="bottom clearfix">
                   <time class="time">
-                    {{ item.createtime }}
+                    {{ item.ct }}
                     <br />
-                    发布者：{{ item.nickname }}
+                    发布者：{{ item.name }}
                   </time>
                 </div>
               </div>
@@ -103,134 +95,137 @@
 </template>
 
 <script>
+import VueAliplayer from "vue-aliplayer";
 import {
-  GetArticleListByUser,
-  GetArticleInfoById,
-  AddArticleLook
+  SelectArticleById,
+  UpdateArticleLooksCount,
+  UpdateArticleCount,
+  AddArticle,
 } from "../api/article_api";
 import { mapState, mapMutations, mapActions } from "vuex";
-import {
-  dateTimeStamp,
-  formatDateTime,
-  getFirstPic,
-  setImgSize
-} from "../utils/util";
-import { GetMarchInfoByInfo } from "../api/match_api";
+import { dateTimeStamp, formatDateTime, getFirstPic } from "../utils/util";
+
+import { SelectSettingsById } from "../api/settings";
 import { PageConfig } from "../utils/tools";
+import { MESSAGE_TYPE } from "vue-baberrage";
+import { vueBaberrage } from "vue-baberrage";
 export default {
   name: "ArticleDetail",
   data() {
     return {
-      loading: false,
+      msg: "",
       collectStatus: false,
-      matchid: "",
-      addressUrl:'http://localhost:8080/#/address?address=',
+      barrageIsShow: false,
+      currentId: 0,
+      barrageLoop: true,
+      barrageList: [],
+      loading: false,
+      articleid: "",
+      counts: { goods_count: 0, collections_count: 0, comments_count: 0 },
+      babHeight: 400,
       articleList: [],
       articleInfo: {},
+      signList: [],
       PageConfig,
       commentInfo: "",
       secondCommentInfo: "",
       firstCommentList: [],
       secondCommentList: [],
-      collectId: ""
+      count: 0,
+      articlePlay: {},
+      collectId: "",
     };
   },
   created() {
-    this.matchid = this.$route.query.matchid;
+    this.imgid = this.$route.query.imgid;
   },
   mounted() {
     this.getArticleInfo();
     this.formatArticleList();
   },
   methods: {
-    ...mapActions(["ArticleGetCollectList", "VideoGetCollectList"]),
-    // address() {
-    //   this.$router.push({
-    //     path: "/address",
-    //     query: { address: this.articleInfo.address }
-    //   });
-    // },
-    getArticleInfo() {
-      GetMarchInfoByInfo({ _id: this.matchid })
-        .then(res => {
-          
+    ...mapActions(["ArticleGetCollectList", ""]),
+
+    getArticleInfo(type) {
+      SelectSettingsById({ settingsId: this.imgid })
+        .then((res) => {
           if (res) {
             this.articleInfo = (res && res.data[0]) || {};
-            this.articleInfo.createtime = formatDateTime(
-              dateTimeStamp(this.articleInfo.createtime)
+            this.articleInfo.ct = formatDateTime(
+              dateTimeStamp(this.articleInfo.ct)
             );
-            this.articleInfo.article = setImgSize(
-              this.articleInfo.article,
-              600,
-              350
-            );
+            this.count++;
+            if (this.count === 1) {
+              this.setArticle(this.articleInfo);
+            }
           } else {
             this.getArticleInfo();
           }
         })
-        .catch(err => {
-          
-        });
+        .catch((err) => {});
     },
     showDetail(data) {
-      
-      // this.matchid = data._id;
       this.$router.push({
         path: "/article_detail",
-        query: { matchid: data._id }
+        query: { articleid: data.id },
       });
+      window.location.reload();
     },
     //格式化推荐文章
     formatArticleList() {
       let list = (this.newArticleList && this.newArticleList.data) || [];
       this.articleList = [];
-      list.map(i => {
-        i.imgurl =
-          getFirstPic(i.article) ||
+      list.map((i) => {
+        i.img_url =
+          i.img_url ||
+          getFirstPic(i.content) ||
           "http://localhost:8888/public/images/noimage.jpg";
-        i.createtime = formatDateTime(dateTimeStamp(i.createtime));
-        i.nickname = (i.articleUser[0] && i.articleUser[0].nickname) || "";
-        i.sortname = i.articleSort[0].sortname || "";
+        i.ct = formatDateTime(dateTimeStamp(i.ct));
+        i.name = i.name || "";
+        i.category_name = i.category_name || "";
         this.articleList.push(i);
       });
-      
     },
-    goListBySort(data) {
-      
-    }
+  },
+  components: {
+    "ali-player": VueAliplayer,
+    "vue-baberrage": vueBaberrage,
   },
   computed: {
     ...mapState({
-      isLogin: state => state.isLogin,
-      userid: state => state.userid,
-      userInfo: state => state.userInfo,
-      danceSortList: state => state.danceSortList,
-      newArticleList: state => state.newArticleList,
-      newVideoList: state => state.newVideoList,
-      messageList: state => state.messageList,
-      videoResult: state => state.videoResult,
-      articleResult: state => state.articleResult,
-      rotationImgList: state => state.rotationImgList,
-      articleCollectList: state => state.articleCollectList
-    })
+      isLogin: (state) => state.isLogin,
+      userId: (state) => state.userId,
+      userInfo: (state) => state.userInfo,
+      danceSortList: (state) => state.danceSortList,
+      newArticleList: (state) => state.newArticleList,
+      messageList: (state) => state.messageList,
+      articleResult: (state) => state.articleResult,
+      rotationImgList: (state) => state.rotationImgList,
+      articleCollectList: (state) => state.articleCollectList,
+    }),
   },
   watch: {
-    matchid: {
-      handler(newval, old) {
-        this.getArticleInfo();
-      },
-      deep: true
-    },
     newArticleList: {
       handler(newval, old) {
         this.formatArticleList();
       },
-      deep: true
-    }
-  }
+      deep: true,
+    },
+    articleid: {
+      handler(newval, old) {
+        this.getArticleInfo();
+        this.getCommentsList();
+        this.getCollectstatus();
+      },
+      deep: true,
+    },
+  },
 };
 </script>
 <style scoped>
+.article_player {
+  padding-top: 20px;
+}
 .title_art {
   font-size: 14px;
   color: #3a3a3a;
@@ -340,4 +335,7 @@ h1 {
   color: #fff;
   transition: all 0.5s;
 }
+</style>
+<style lang="postcss" scoped>
+@import "https://g.alicdn.com/de/prismplayer/2.8.8/skins/default/aliplayer-min.css";
 </style>

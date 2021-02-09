@@ -18,6 +18,9 @@ const mutations = {
     changeNewArticleList(state, params) {
         state.newArticleList = params;
     },
+    changeNewVideoList(state, params) {
+        state.newVideoList = params;
+    },
 
     changeArticleList(state, params) {
         state.articleList = params;

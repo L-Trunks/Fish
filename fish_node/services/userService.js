@@ -15,7 +15,7 @@ async function userRegister(params) {
 
 //用户登录
 async function userLogin(params) {
-    let sql = `select user_name,name,permission,introduce,img_url from f_user where user_name = '${params.userName}' and pass_word = '${params.passWord}'`
+    let sql = `select id,user_name,name,permission,introduce,img_url from f_user where user_name = '${params.userName}' and pass_word = '${params.passWord}'`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -54,7 +54,7 @@ async function selectAllUser(params) {
 
 //根据id查询用户信息
 async function selectUserById(params) {
-    let sql = `select user_name,name,permission,introduce,img_url,ct from f_user where id = '${params.userId}'`
+    let sql = `select id,user_name,name,permission,introduce,img_url,ct from f_user where id = '${params.userId}'`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {

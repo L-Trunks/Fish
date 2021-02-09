@@ -94,7 +94,20 @@ async function selectArticleByType(params) {
 
 //根据分类查询文章
 async function selectAllArticleByType(params) {
-    let sql = `select SQL_CALC_FOUND_ROWS a.*,u.user_name,u.name,c.category_name from f_article a,f_user u,f_category c where a.category_id = c.id and a.user_id = u.id and a.category_id = '${params.categoryId}' order by a.ct desc limit ${(params.page - 1) * params.limit},${params.limit};SELECT FOUND_ROWS() as total;`
+    let sql = `select SQL_CALC_FOUND_ROWS a.*,u.user_name,u.name,c.category_name from f_article a,f_user u,f_category c where a.category_id = c.id and a.user_id = u.id and a.type='文章' and a.category_id = '${params.categoryId}' order by a.ct desc limit ${(params.page - 1) * params.limit},${params.limit};SELECT FOUND_ROWS() as total;`
+    let data = await mysql.execute(sql)
+    return new Promise((resolve, reject) => {
+        if (data && data.errno) {
+            reject(data)
+        } else {
+            resolve(data)
+        }
+    })
+}
+
+//根据分类查询视频
+async function selectAllVideoByType(params) {
+    let sql = `select SQL_CALC_FOUND_ROWS a.*,u.user_name,u.name,c.category_name from f_article a,f_user u,f_category c where a.category_id = c.id and a.user_id = u.id and a.type='视频' and a.category_id = '${params.categoryId}' order by a.ct desc limit ${(params.page - 1) * params.limit},${params.limit};SELECT FOUND_ROWS() as total;`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -133,7 +146,7 @@ async function selectArticleById(params) {
 
 //模糊查询
 async function selectArticleByLike(params) {
-    let sql = `select SQL_CALC_FOUND_ROWS a.*,u.user_name,u.name,c.category_name from f_article a,f_user u,f_category c where a.user_id = u.id and a.category_id = c.id and a.content like '%'${params.keyword}'%' or a.sign like '%'${params.keyword}'%' or a.title like '%'${params.keyword}'%' order by a.ct desc limit ${(params.page - 1) * params.limit},${params.limit};SELECT FOUND_ROWS() as total;`
+    let sql = `select SQL_CALC_FOUND_ROWS a.*,u.user_name,u.name,c.category_name from f_article a,f_user u,f_category c where a.user_id = u.id and a.category_id = c.id and a.content like '%${params.keyword}%' order by a.ct desc limit ${(params.page - 1) * params.limit},${params.limit};SELECT FOUND_ROWS() as total;`
     let data = await mysql.execute(sql)
     return new Promise((resolve, reject) => {
         if (data && data.errno) {
@@ -155,5 +168,6 @@ module.exports = {
     selectAllArticle: selectAllArticle,
     selectArticleByType:selectArticleByType,
     selectAllArticleByUser: selectAllArticleByUser,
-    selectAllArticleByType: selectAllArticleByType
+    selectAllArticleByType: selectAllArticleByType,
+    selectAllVideoByType:selectAllVideoByType
 }
